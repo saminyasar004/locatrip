@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "locatrip",
+    "name": "LocaTrip",
     "slug": "locatrip",
     "version": "1.0.0",
     "scheme": "locatrip",
@@ -27,6 +27,13 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#fbfefe"
+      },
+      "package": "com.saminyasar004.locatrip"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ddcc2120-df98-47f1-aaa7-25e86a95394e"
       }
     }
   }
