@@ -6,7 +6,8 @@
 
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
-    }
+      "@/*": ["./src/*"]
+    },
+    "typeRoots": ["./node_modules/@types", "./types/declaratrions.d.ts"]
   }
 }
