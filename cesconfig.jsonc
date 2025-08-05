@@ -2,12 +2,12 @@
 // It is safe to delete this file as it does not affect the functionality of your application.
 {
   "cesVersion": "2.18.7",
-  "projectName": "my-expo-app",
+  "projectName": "locatrip",
   "packages": [
     {
       "name": "nativewind",
-      "type": "styling"
-    }
+      "type": "styling",
+    },
   ],
   "flags": {
     "noGit": false,
@@ -16,16 +16,16 @@
     "importAlias": true,
     "packageManager": "npm",
     "eas": false,
-    "publish": false
+    "publish": false,
   },
   "packageManager": {
     "type": "npm",
-    "version": "10.9.2"
+    "version": "10.9.2",
   },
   "os": {
     "type": "Linux",
     "platform": "linux",
     "arch": "x64",
-    "kernelVersion": "6.15.7-1-liquorix-amd64"
-  }
+    "kernelVersion": "6.15.7-1-liquorix-amd64",
+  },
 }
