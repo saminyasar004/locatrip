@@ -7,7 +7,7 @@ export default function Onboarding2() {
 
   return (
     <SafeAreaView>
-      <ScrollView className="h-full w-full">
+      <ScrollView className="w-full" contentContainerStyle={{ flexGrow: 1 }}>
         <View className="row">
           <View className="flex w-full items-end justify-end py-8">
             <Link href="/auth/login">

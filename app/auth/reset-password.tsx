@@ -11,7 +11,7 @@ export default function Register() {
 
   return (
     <SafeAreaView className="bg-primary">
-      <ScrollView className="h-full w-full">
+      <ScrollView className="w-full" contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex min-h-max w-full flex-col gap-4">
           <View className="row gap-3 py-12">
             <Text className="text-2xl font-bold text-white">Reset Your Password</Text>
