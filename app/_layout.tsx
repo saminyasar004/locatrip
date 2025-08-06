@@ -8,12 +8,10 @@ export default function RootLayout() {
     <SafeAreaView style={{ flex: 1 }}>
       <Stack
         screenOptions={{
-          //   headerStyle: { backgroundColor: '#3b82f6' },
-          //   headerTintColor: '#fff',
-          //   headerTitleStyle: { fontWeight: 'bold' },
           headerShown: false,
         }}>
-        <Stack.Screen name="index" options={{ title: 'Home', headerShown: false }} />
+        {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
+        <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>
     </SafeAreaView>
   );
