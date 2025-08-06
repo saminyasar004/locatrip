@@ -88,7 +88,7 @@ export default function PersonalizeStep4() {
               />
             </View>
 
-            <View className="flex w-full flex-col gap-2">
+            <View className="flex w-full flex-col gap-2" style={{ zIndex: 3000 }}>
               <Text className="text-lg font-semibold text-[#575757]">Trip Type</Text>
               <DropDownPicker
                 open={isTripTypePickerOpen}
@@ -124,7 +124,7 @@ export default function PersonalizeStep4() {
               />
             </View>
 
-            <View className="flex w-full flex-col gap-2" style={{ zIndex: 1000 }}>
+            <View className="flex w-full flex-col gap-2" style={{ zIndex: 2000 }}>
               <Text className="text-lg font-semibold text-[#575757]">Budget</Text>
               <DropDownPicker
                 open={isBudgetPickerOpen}
@@ -138,7 +138,7 @@ export default function PersonalizeStep4() {
                   backgroundColor: '#f8dcd7',
                   borderColor: '#f8dcd7',
                   flex: 1,
-                  zIndex: 1000, // Lower zIndex for Budget
+                  zIndex: 2000, // Lower zIndex for Budget
                 }}
                 ArrowDownIconComponent={({ style }) => <ChevronDown size={24} color={'#6E6E6E'} />}
                 ArrowUpIconComponent={({ style }) => <ChevronUp size={24} color={'#6E6E6E'} />}
@@ -146,7 +146,7 @@ export default function PersonalizeStep4() {
                   backgroundColor: '#ffffff',
                   borderColor: '#ffffff',
                   borderRadius: 10,
-                  zIndex: 1000, // Match zIndex
+                  zIndex: 2000, // Match zIndex
                 }}
                 labelStyle={{
                   color: '#575757',
@@ -160,7 +160,7 @@ export default function PersonalizeStep4() {
               />
             </View>
 
-            <View className="flex w-full flex-col gap-2">
+            <View className="flex w-full flex-col gap-2" style={{ zIndex: 1000 }}>
               <View className="flex w-full flex-row items-center justify-start gap-2">
                 <Clock3 size={16} color={'#6A707C'} />
                 <Text className="text-lg font-semibold text-[#575757]">Duration</Text>
