@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 
 interface PersonalizeItemProps {
@@ -9,6 +10,13 @@ interface PersonalizeItemProps {
 
 export default function PersonalizeStep5() {
   const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.replace('/home');
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <SafeAreaView className="bg-background">
