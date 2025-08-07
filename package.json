@@ -9,27 +9,29 @@
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
     "web": "expo start --web",
-    "build:apk": "eas build -p android --profile preview"
+    "build:apk": "eas build -p android --profile"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "8.4.1",
     "clsx": "^2.1.1",
     "expo": "^53.0.20",
     "expo-linking": "~7.1.7",
     "expo-router": "~5.1.4",
     "expo-status-bar": "~2.2.3",
+    "expo-updates": "~0.28.17",
     "lucide-react-native": "^0.536.0",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
     "react-native": "0.79.5",
     "react-native-bouncy-checkbox": "^4.1.2",
     "react-native-dropdown-picker": "^5.4.6",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
     "react-native-svg": "^15.12.1",
     "tailwind-merge": "^3.3.1",
-    "expo-updates": "~0.28.17",
-    "@react-native-community/datetimepicker": "8.4.1"
+    "expo-linear-gradient": "~14.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
