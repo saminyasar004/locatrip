@@ -2,7 +2,7 @@ import Onboarding1Img from 'assets/onboarding-doodle-1.svg';
 import { Link, useRouter } from 'expo-router';
 import { SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
 
-export default function Onboarding1() {
+export default function Index() {
   const router = useRouter();
 
   return (

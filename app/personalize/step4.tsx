@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-export default function PersonalizeStep4() {
+export default function Index() {
   const router = useRouter();
   const [isTripTypePickerOpen, setIsTripTypePickerOpen] = useState(false);
   const [isBudgetPickerOpen, setIsBudgetPickerOpen] = useState(false);

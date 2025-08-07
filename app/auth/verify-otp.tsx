@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { SafeAreaView, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
 
-export default function VerifyOTP() {
+export default function Index() {
   const router = useRouter();
 
   return (

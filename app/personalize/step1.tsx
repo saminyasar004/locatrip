@@ -10,7 +10,7 @@ interface PersonalizeItemProps {
   isChecked: boolean;
 }
 
-export default function PersonalizeStep1() {
+export default function Index() {
   const router = useRouter();
   const [count, setCount] = useState(0);
   const [personalizeItems, setPersonalizeItems] = useState<PersonalizeItemProps[]>([

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 
-export default function Login() {
+export default function Index() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 

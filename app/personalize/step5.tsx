@@ -2,13 +2,7 @@ import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 
-interface PersonalizeItemProps {
-  id: number;
-  title: string;
-  isChecked: boolean;
-}
-
-export default function PersonalizeStep5() {
+export default function Index() {
   const router = useRouter();
 
   useEffect(() => {
