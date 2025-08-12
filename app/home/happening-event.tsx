@@ -166,31 +166,37 @@ export default function Index() {
         <View className="flex w-full flex-row flex-wrap items-center justify-between gap-[10px] py-4">
           {/* Event cards */}
           {Array.from({ length: 2 }).map((_, index) => (
-            <View key={index} className="flex w-[48%] flex-col gap-3 rounded-lg bg-white pb-5">
-              <View className="relative flex h-40 items-center justify-center">
-                <Image
-                  source={require(`assets/event-1.jpg`)}
-                  className="h-full w-full rounded-lg"
-                />
-                <TouchableHighlight className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
-                  <Heart size={16} color={'#F86241'} />
-                </TouchableHighlight>
+            <TouchableHighlight
+              key={index}
+              onPress={() => router.push('/local-recommend/card-details')}
+              underlayColor={'transparent'}
+              className="w-[48%]">
+              <View className="flex w-full flex-col gap-3 rounded-lg bg-white pb-5">
+                <View className="relative flex h-40 items-center justify-center">
+                  <Image
+                    source={require(`assets/event-1.jpg`)}
+                    className="h-full w-full rounded-lg"
+                  />
+                  <TouchableHighlight className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                    <Heart size={16} color={'#F86241'} />
+                  </TouchableHighlight>
 
-                <TouchableHighlight className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
-                  <Share2Icon size={16} color={'#F86241'} />
-                </TouchableHighlight>
-              </View>
-              <View className="flex flex-col gap-3 bg-white px-6">
-                <Text className="text-lg font-medium">Dance Fiesta</Text>
-                <View className="flex w-full flex-row items-center justify-between">
-                  <View className="flex flex-row items-center gap-2">
-                    <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
-                    <Text className="font-medium text-[#63707C]">4.8</Text>
+                  <TouchableHighlight className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                    <Share2Icon size={16} color={'#F86241'} />
+                  </TouchableHighlight>
+                </View>
+                <View className="flex flex-col gap-3 bg-white px-6">
+                  <Text className="text-lg font-medium">Dance Fiesta</Text>
+                  <View className="flex w-full flex-row items-center justify-between">
+                    <View className="flex flex-row items-center gap-2">
+                      <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
+                      <Text className="font-medium text-[#63707C]">4.8</Text>
+                    </View>
+                    <Text className="text-[#63707C]">2.5 Km</Text>
                   </View>
-                  <Text className="text-[#63707C]">2.5 Km</Text>
                 </View>
               </View>
-            </View>
+            </TouchableHighlight>
           ))}
         </View>
 
@@ -290,31 +296,37 @@ export default function Index() {
         <View className="flex w-full flex-row flex-wrap items-center justify-between gap-[10px] py-4">
           {/* Event cards */}
           {Array.from({ length: 2 }).map((_, index) => (
-            <View key={index} className="flex w-[48%] flex-col gap-3 rounded-lg bg-white pb-5">
-              <View className="relative flex h-40 items-center justify-center">
-                <Image
-                  source={require(`assets/event-5.jpg`)}
-                  className="h-full w-full rounded-lg"
-                />
-                <TouchableHighlight className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
-                  <Heart size={16} color={'#F86241'} />
-                </TouchableHighlight>
+            <TouchableHighlight
+              key={index}
+              onPress={() => router.push('/local-recommend/card-details')}
+              underlayColor={'transparent'}
+              className="w-[48%]">
+              <View className="flex w-full flex-col gap-3 rounded-lg bg-white pb-5">
+                <View className="relative flex h-40 items-center justify-center">
+                  <Image
+                    source={require(`assets/event-1.jpg`)}
+                    className="h-full w-full rounded-lg"
+                  />
+                  <TouchableHighlight className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                    <Heart size={16} color={'#F86241'} />
+                  </TouchableHighlight>
 
-                <TouchableHighlight className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
-                  <Share2Icon size={16} color={'#F86241'} />
-                </TouchableHighlight>
-              </View>
-              <View className="flex flex-col gap-3 bg-white px-6">
-                <Text className="text-lg font-medium">Dance Fiesta</Text>
-                <View className="flex w-full flex-row items-center justify-between">
-                  <View className="flex flex-row items-center gap-2">
-                    <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
-                    <Text className="font-medium text-[#63707C]">4.8</Text>
+                  <TouchableHighlight className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                    <Share2Icon size={16} color={'#F86241'} />
+                  </TouchableHighlight>
+                </View>
+                <View className="flex flex-col gap-3 bg-white px-6">
+                  <Text className="text-lg font-medium">Dance Fiesta</Text>
+                  <View className="flex w-full flex-row items-center justify-between">
+                    <View className="flex flex-row items-center gap-2">
+                      <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
+                      <Text className="font-medium text-[#63707C]">4.8</Text>
+                    </View>
+                    <Text className="text-[#63707C]">2.5 Km</Text>
                   </View>
-                  <Text className="text-[#63707C]">2.5 Km</Text>
                 </View>
               </View>
-            </View>
+            </TouchableHighlight>
           ))}
         </View>
 

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { Briefcase, House, ThumbsUp, UserRound } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
 import { cn } from 'utils';
 
@@ -19,7 +19,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
     {
       name: 'My Plan',
       icon: <Briefcase size={20} color={activeTab === 'My Plan' ? '#F86241' : '#63707C'} />,
-      url: '/personalize/step1',
+      url: '/my-plan',
     },
     {
       name: 'Local Recommend',
@@ -32,6 +32,9 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
       url: '/auth/login',
     },
   ];
+  // useEffect(() => {
+
+  // }, [])
 
   return (
     <SafeAreaView className="flex-1 bg-background">
