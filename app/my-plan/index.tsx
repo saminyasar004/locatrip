@@ -93,10 +93,9 @@ export default function Index() {
               <TouchableHighlight
                 onPress={() => router.push('/my-plan/plan-details')}
                 underlayColor={'transparent'}
+                key={index}
                 className="flex w-full">
-                <View
-                  key={index}
-                  className="flex flex-row items-center justify-between gap-4 rounded-lg bg-white p-3 shadow-md">
+                <View className="flex flex-row items-center justify-between gap-4 rounded-lg bg-white p-3 shadow-md">
                   {/* img */}
                   <View className="flex h-20 w-24 items-center justify-center overflow-hidden rounded-lg">
                     <Image source={require('assets/dinner.jpg')} className="h-full w-full" />
