@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import { Briefcase, House, ThumbsUp, UserRound } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
@@ -6,10 +6,29 @@ import { cn } from 'utils';
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
   const router = useRouter();
+  const pathName = usePathname();
 
   const [activeTab, setActiveTab] = useState<'Home' | 'My Plan' | 'Local Recommend' | 'Profile'>(
     'Home'
   );
+
+  const routesBasedOnTabs = {
+    Home: ['/home', '/home/happening-event'],
+    'My Plan': ['/my-plan', '/my-plan/plan-details'],
+    'Local Recommend': ['/local-recommend', '/local-recommend/card-details'],
+    // profile: [''],
+  };
+
+  useEffect(() => {
+    // dynamically set the active tab based on the path
+    const activeTab = Object.keys(routesBasedOnTabs).find((tab) =>
+      routesBasedOnTabs[tab as any].includes(pathName)
+    );
+    if (activeTab) {
+      setActiveTab(activeTab as any);
+    }
+  }, [pathName]);
+
   const tabs = [
     {
       name: 'Home',
