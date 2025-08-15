@@ -33,8 +33,7 @@ export default function Index() {
                 />
                 <TouchableHighlight
                   onPress={() => setShowPassword(!showPassword)}
-                  underlayColor="transparent"
-                  className="">
+                  underlayColor="transparent">
                   {showPassword ? (
                     <EyeOff color="#F86241" size={20} />
                   ) : (
@@ -55,8 +54,7 @@ export default function Index() {
                 />
                 <TouchableHighlight
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                  underlayColor="transparent"
-                  className="">
+                  underlayColor="transparent">
                   {showConfirmPassword ? (
                     <EyeOff color="#F86241" size={20} />
                   ) : (
