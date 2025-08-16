@@ -10,7 +10,6 @@ import {
   MapPin,
   Phone,
   Star,
-  Users,
 } from 'lucide-react-native';
 import { Image, Text, TouchableHighlight, View } from 'react-native';
 
