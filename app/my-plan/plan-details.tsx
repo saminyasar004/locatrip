@@ -193,7 +193,12 @@ export default function Index() {
 
           <View className="flex w-full flex-row items-center justify-between py-2">
             <Text className="text-xl font-semibold text-foreground">Nearest Hotel & Resorts</Text>
-            <Text className="text-base font-semibold text-primary">View All</Text>
+            <TouchableHighlight
+              onPress={() => router.push('/my-plan/nearest-hotel')}
+              underlayColor={'transparent'}
+              className="flex items-end py-2">
+              <Text className="text-base font-semibold text-primary">View All</Text>
+            </TouchableHighlight>
           </View>
 
           <View className="flex w-full flex-row flex-wrap items-center justify-between gap-[10px] py-4">
