@@ -1,7 +1,7 @@
 import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Star } from 'lucide-react-native';
-import { Text, TouchableHighlight, View } from 'react-native';
+import { Image, Text, TouchableHighlight, View } from 'react-native';
 
 export default function Index() {
   const router = useRouter();
@@ -74,6 +74,98 @@ export default function Index() {
           <View className="flex w-full flex-row items-center justify-between py-2">
             <Text className="text-xl font-semibold text-foreground">Feedback</Text>
             <Text className="text-base font-semibold text-primary">View All</Text>
+          </View>
+
+          <View className="flex w-full flex-col gap-4 rounded-lg bg-white p-4">
+            <View className="flex w-full flex-row items-center justify-start gap-2">
+              <Image source={require('assets/avatar.jpg')} className="h-10 w-10 rounded-full" />
+
+              <View className="flex flex-col">
+                <Text className="text-lg font-medium">Maria Rodriguez</Text>
+                <View className="flex flex-row items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star key={index} size={16} fill={'#E7AE33'} color={'#E7AE33'} />
+                  ))}
+                  <Text className="pl-2 text-sm text-[#63707C]">2 days ago</Text>
+                </View>
+              </View>
+            </View>
+            <View className="flex w-full items-center">
+              <Text className="text-base text-[#63707C]">
+                Absolutely amazing experience! The Gallo Pinto was authentic and delicious. The
+                atmosphere is cozy and the staff is incredibly friendly. The presentation was
+                beautiful and every bite was flavorful
+              </Text>
+            </View>
+          </View>
+
+          <View className="flex w-full flex-col gap-4 rounded-lg bg-white p-4">
+            <View className="flex w-full flex-row items-center justify-start gap-2">
+              <Image source={require('assets/avatar.jpg')} className="h-10 w-10 rounded-full" />
+
+              <View className="flex flex-col">
+                <Text className="text-lg font-medium">Maria Rodriguez</Text>
+                <View className="flex flex-row items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star key={index} size={16} fill={'#E7AE33'} color={'#E7AE33'} />
+                  ))}
+                  <Text className="pl-2 text-sm text-[#63707C]">2 days ago</Text>
+                </View>
+              </View>
+            </View>
+            <View className="flex w-full items-center">
+              <Text className="text-base text-[#63707C]">
+                Absolutely amazing experience! The Gallo Pinto was authentic and delicious. The
+                atmosphere is cozy and the staff is incredibly friendly. The presentation was
+                beautiful and every bite was flavorful
+              </Text>
+            </View>
+          </View>
+
+          <View className="flex w-full flex-col gap-4 rounded-lg bg-white p-4">
+            <View className="flex w-full flex-row items-center justify-start gap-2">
+              <Image source={require('assets/avatar.jpg')} className="h-10 w-10 rounded-full" />
+
+              <View className="flex flex-col">
+                <Text className="text-lg font-medium">Maria Rodriguez</Text>
+                <View className="flex flex-row items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star key={index} size={16} fill={'#E7AE33'} color={'#E7AE33'} />
+                  ))}
+                  <Text className="pl-2 text-sm text-[#63707C]">2 days ago</Text>
+                </View>
+              </View>
+            </View>
+            <View className="flex w-full items-center">
+              <Text className="text-base text-[#63707C]">
+                Absolutely amazing experience! The Gallo Pinto was authentic and delicious. The
+                atmosphere is cozy and the staff is incredibly friendly. The presentation was
+                beautiful and every bite was flavorful
+              </Text>
+            </View>
+          </View>
+
+          <View className="bg rounded-white flex w-full flex-col gap-4 p-4">
+            <View className="flex w-full flex-row items-center justify-start gap-2">
+              <Image source={require('assets/avatar.jpg')} className="h-10 w-10 rounded-full" />
+
+              <View className="flex flex-col">
+                <Text className="text-lg font-medium">Maria Rodriguez</Text>
+                <View className="flex flex-row items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star key={index} size={16} fill={'#E7AE33'} color={'#E7AE33'} />
+                  ))}
+                  <Text className="pl-2 text-sm text-[#63707C]">2 days ago</Text>
+                </View>
+              </View>
+            </View>
+            <View className="flex w-full items-center">
+              <Text className="text-base text-[#63707C]">
+                Absolutely amazing experience! The Gallo Pinto was authentic and delicious. The
+                atmosphere is cozy and the staff is incredibly friendly. The presentation was
+                beautiful and every bite was flavorful
+              </Text>
+            </View>
           </View>
         </View>
       </View>
