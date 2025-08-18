@@ -15,7 +15,6 @@ import {
   Phone,
   Star,
   Users,
-  UserStar,
   UtensilsCrossed,
 } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
@@ -537,7 +536,7 @@ export default function Index() {
                   indicatorStyle={{ backgroundColor: '#F86241' }}
                   style={{ backgroundColor: '#FFFFFF' }}
                   tabStyle={{ height: 50 }}
-                  activeColor="#000000"
+                  activeColor="#F86241"
                   inactiveColor="#000000"
                   pressColor="transparent"
                   pressOpacity={1}
