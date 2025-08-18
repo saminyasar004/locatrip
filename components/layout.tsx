@@ -14,7 +14,20 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
 
   const routesBasedOnTabs = {
     Home: ['/home', '/home/happening-event'],
-    'My Plan': ['/my-plan', '/my-plan/plan-details'],
+    'My Plan': [
+      '/my-plan',
+      '/my-plan/plan-details',
+      '/my-plan/aerial-views',
+      '/my-plan/nearest-restaurant',
+      '/my-plan/nearest-hotel',
+      '/my-plan/nearest-local-festival',
+      '/my-plan/nearest-art',
+      '/my-plan/restaurant-details',
+      '/my-plan/hotel-details',
+      '/my-plan/art-details',
+      '/my-plan/local-festival-details',
+      '/my-plan/reviews',
+    ],
     'Local Recommend': ['/local-recommend', '/local-recommend/card-details'],
     // profile: [''],
   };
