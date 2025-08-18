@@ -29,7 +29,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
       '/my-plan/reviews',
     ],
     'Local Recommend': ['/local-recommend', '/local-recommend/card-details'],
-    // profile: [''],
+    Profile: ['/profile', '/profile/personal-informations'],
   };
 
   useEffect(() => {
@@ -61,12 +61,9 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
     {
       name: 'Profile',
       icon: <UserRound size={20} color={activeTab === 'Profile' ? '#F86241' : '#63707C'} />,
-      url: '/auth/login',
+      url: '/profile',
     },
   ];
-  // useEffect(() => {
-
-  // }, [])
 
   return (
     <SafeAreaView className="flex-1 bg-background">
