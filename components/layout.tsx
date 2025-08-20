@@ -34,6 +34,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
       '/profile/personal-informations',
       '/profile/subscription',
       '/profile/help',
+      '/profile/terms',
     ],
   };
 
