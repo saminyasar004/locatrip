@@ -29,7 +29,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
       '/my-plan/reviews',
     ],
     'Local Recommend': ['/local-recommend', '/local-recommend/card-details'],
-    Profile: ['/profile', '/profile/personal-informations'],
+    Profile: ['/profile', '/profile/personal-informations', '/profile/subscription'],
   };
 
   useEffect(() => {
