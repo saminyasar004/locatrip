@@ -1,24 +1,8 @@
 import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
-import {
-  ArrowLeft,
-  Check,
-  Crown,
-  MessagesSquare,
-  Search,
-  SquarePen,
-  Star,
-  Zap,
-} from 'lucide-react-native';
+import { ArrowLeft, Check, Crown, MessagesSquare, Zap } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
-import {
-  Image,
-  Text,
-  TextInput,
-  TouchableHighlight,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { Text, TouchableHighlight, useWindowDimensions, View } from 'react-native';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 
 const FreeTrialTab = () => (
@@ -161,12 +145,6 @@ export default function Index() {
   // Give TabView a real height so scenes can render even inside ScrollView/auto-height parents
   // Tweak the fraction as you like, or replace with a fixed px value.
   const tabHeight = useMemo(() => Math.max(1000, Math.floor(layout.height * 1)), [layout.height]);
-
-  const renderLabel = ({ route, focused, color }) => (
-    <View className="rounded-full bg-primary">
-      <Text className="text-white">{route.title}</Text>
-    </View>
-  );
 
   return (
     <Layout>
