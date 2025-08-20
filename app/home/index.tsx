@@ -64,12 +64,16 @@ export default function Index() {
             </View>
           </View>
           {/* Notification */}
-          <View className="relative flex h-14 w-14 items-center justify-center rounded-full bg-accent">
-            <Bell size={28} color="#F86241" />
-            <View className="absolute right-2 top-2 h-6 w-6 items-center justify-center rounded-full bg-primary">
-              <Text className="text-xs text-white">1</Text>
+          <TouchableHighlight
+            onPress={() => router.push('/notifications')}
+            underlayColor={'transparent'}>
+            <View className="relative flex h-14 w-14 items-center justify-center rounded-full bg-accent">
+              <Bell size={28} color="#F86241" />
+              <View className="absolute right-2 top-2 h-6 w-6 items-center justify-center rounded-full bg-primary">
+                <Text className="text-xs text-white">1</Text>
+              </View>
             </View>
-          </View>
+          </TouchableHighlight>
         </View>
 
         {/* Plan card */}
