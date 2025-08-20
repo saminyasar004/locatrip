@@ -29,7 +29,12 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
       '/my-plan/reviews',
     ],
     'Local Recommend': ['/local-recommend', '/local-recommend/card-details'],
-    Profile: ['/profile', '/profile/personal-informations', '/profile/subscription'],
+    Profile: [
+      '/profile',
+      '/profile/personal-informations',
+      '/profile/subscription',
+      '/profile/help',
+    ],
   };
 
   useEffect(() => {
