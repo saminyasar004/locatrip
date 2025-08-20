@@ -170,7 +170,8 @@ export default function Index() {
 
               <View className="flex w-full items-center justify-center pt-8">
                 <TouchableHighlight
-                  onPress={() => router.push('/personalize/step2')}
+                  onPress={() => router.push('/auth/login')}
+                  underlayColor={'transparent'}
                   className="flex w-full flex-1 items-center justify-center">
                   <View className="flex w-full flex-row items-center justify-center gap-3 rounded-full border-2 border-primary p-3">
                     <LogOut size={20} color={'#F86241'} />

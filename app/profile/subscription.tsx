@@ -1,6 +1,15 @@
 import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Search, SquarePen, Star } from 'lucide-react-native';
+import {
+  ArrowLeft,
+  Check,
+  Crown,
+  MessagesSquare,
+  Search,
+  SquarePen,
+  Star,
+  Zap,
+} from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import {
   Image,
@@ -13,20 +22,120 @@ import {
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 
 const FreeTrialTab = () => (
-  <View className="w-full flex-1 flex-col gap-3 py-6">
-    <Text className="text-lg font-semibold">About the Gallery</Text>
+  <View className="w-full flex-1 flex-col gap-3 px-5 py-10">
+    <View className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
+      <Zap size={24} color={'#F86241'} fill={'#F86241'} />
+    </View>
+
+    <View className="flex w-full flex-row items-center justify-center gap-0 text-center">
+      <Text className="text-lg font-semibold">Free Trial</Text>
+      <Text className="text-lg text-[#5C5C5C]">/Free for 7 Days</Text>
+    </View>
+
+    <TouchableHighlight
+      // onPress={() => router.push('/auth/login')}
+      underlayColor={'transparent'}
+      className="flex w-full items-center justify-center py-8">
+      <View className="flex w-full flex-row items-center justify-center gap-3 rounded-full border-2 border-primary bg-primary p-3">
+        <Text className="text-xl font-bold text-white">Upgrade Plan</Text>
+      </View>
+    </TouchableHighlight>
+
+    <View className="flex w-full flex-row items-center gap-3">
+      <Check size={24} color={'#2EC866'} />
+      <Text className="text-[#63707C]">3 itinerary generations/month</Text>
+    </View>
+
+    <View className="flex w-full flex-row items-center gap-3">
+      <Check size={24} color={'#2EC866'} />
+      <Text className="text-[#63707C]">Ads included</Text>
+    </View>
+
+    <View className="flex w-full flex-row items-center gap-3">
+      <Check size={24} color={'#2EC866'} />
+      <Text className="text-[#63707C]">Basic support</Text>
+    </View>
   </View>
 );
 
 const BasicTab = () => (
-  <View className="w-full flex-1 flex-col gap-3 py-6">
-    <Text className="text-lg font-semibold">About the Gallery</Text>
+  <View className="w-full flex-1 flex-col gap-3 px-5 py-10">
+    <View className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
+      <MessagesSquare size={24} color={'#F86241'} fill={'#F86241'} />
+    </View>
+
+    <View className="flex w-full flex-row items-center justify-center gap-0 text-center">
+      <Text className="text-lg font-semibold">Basic</Text>
+      <Text className="text-lg text-[#5C5C5C]">/Per months</Text>
+    </View>
+    <Text className="text-center text-4xl font-bold">$50</Text>
+
+    <TouchableHighlight
+      // onPress={() => router.push('/auth/login')}
+      underlayColor={'transparent'}
+      className="flex w-full items-center justify-center py-8">
+      <View className="flex w-full flex-row items-center justify-center gap-3 rounded-full border-2 border-primary bg-primary p-3">
+        <Text className="text-xl font-bold text-white">Upgrade Plan</Text>
+      </View>
+    </TouchableHighlight>
+
+    <View className="flex w-full flex-row items-center gap-3">
+      <Check size={24} color={'#2EC866'} />
+      <Text className="text-[#63707C]">20 AI itineraries/month</Text>
+    </View>
+
+    <View className="flex w-full flex-row items-center gap-3">
+      <Check size={24} color={'#2EC866'} />
+      <Text className="text-[#63707C]">Reduced ads</Text>
+    </View>
+
+    <View className="flex w-full flex-row items-center gap-3">
+      <Check size={24} color={'#2EC866'} />
+      <Text className="text-[#63707C]">Standard suggestions</Text>
+    </View>
   </View>
 );
 
 const PremiumTab = () => (
-  <View className="w-full flex-1 flex-col gap-3 py-6">
-    <Text className="text-lg font-semibold">About the Gallery</Text>
+  <View className="w-full flex-1 flex-col gap-3 px-5 py-10">
+    <View className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
+      <Crown size={24} color={'#F86241'} fill={'#F86241'} />
+    </View>
+
+    <View className="flex w-full flex-row items-center justify-center gap-0 text-center">
+      <Text className="text-lg font-semibold">Premium</Text>
+      <Text className="text-lg text-[#5C5C5C]">/Per months</Text>
+    </View>
+    <Text className="text-center text-4xl font-bold">$100</Text>
+
+    <TouchableHighlight
+      // onPress={() => router.push('/auth/login')}
+      underlayColor={'transparent'}
+      className="flex w-full items-center justify-center py-8">
+      <View className="flex w-full flex-row items-center justify-center gap-3 rounded-full border-2 border-primary bg-primary p-3">
+        <Text className="text-xl font-bold text-white">Upgrade Plan</Text>
+      </View>
+    </TouchableHighlight>
+
+    <View className="flex w-full flex-row items-center gap-3">
+      <Check size={24} color={'#2EC866'} />
+      <Text className="text-[#63707C]">Unlimited AI itineraries</Text>
+    </View>
+
+    <View className="flex w-full flex-row items-center gap-3">
+      <Check size={24} color={'#2EC866'} />
+      <Text className="text-[#63707C]">No ads</Text>
+    </View>
+
+    <View className="flex w-full flex-row items-center gap-3">
+      <Check size={24} color={'#2EC866'} />
+      <Text className="text-[#63707C]">Exclusive travel insights</Text>
+    </View>
+
+    <View className="flex w-full flex-row items-center gap-3">
+      <Check size={24} color={'#2EC866'} />
+      <Text className="text-[#63707C]">Standard suggestions</Text>
+    </View>
   </View>
 );
 
