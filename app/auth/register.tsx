@@ -1,11 +1,65 @@
 import AppleImg from 'assets/apple.svg';
 import GoogleImg from 'assets/google.svg';
 import { useRouter } from 'expo-router';
+import { useAuth } from 'hooks/useAuth';
 import { Eye, EyeOff } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { z } from 'zod';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { cn, getLocalStorageItem } from 'utils';
+
+const signupSchema = z
+  .object({
+    full_name: z.string().min(2, 'Full name must be at least 2 characters'),
+    email: z.string().email('Invalid email'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirm_password: z.string().min(8, 'Confirm password must be at least 8 characters'),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: 'Passwords must match',
+    path: ['confirm_password'],
+  });
+
+type SignupForm = z.infer<typeof signupSchema>;
 
 export default function Index() {
+  const { isAuthenticated, login, register, loading, error, user } = useAuth();
+
+  const signupForm = useForm<SignupForm>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: { full_name: '', email: '', password: '', confirm_password: '' },
+  });
+
+  const handleSignup = async (formData: SignupForm) => {
+    console.log('Registering with data:', formData);
+
+    try {
+      const response = await register(
+        formData.full_name,
+        formData.email,
+        formData.password,
+        formData.confirm_password
+      );
+      console.log('It is from signup page.');
+      console.log(response);
+      // Access the user from the response directly
+      console.log('User from response:', response.user);
+    } catch (err) {
+      console.error('Registration error:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      console.log('User from updated state:', user);
+      console.log('Access token from local storage:');
+      console.log(getLocalStorageItem('access_token'));
+      router.push('/');
+    }
+  }, [isAuthenticated, user]);
+
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
@@ -24,58 +78,148 @@ export default function Index() {
         <View className="h-full w-full overflow-hidden rounded-[30px] rounded-bl-none rounded-br-none bg-background py-10">
           <View className="row flex flex-col gap-4">
             <View className="flex w-full flex-col gap-2">
+              <Text className="font-semibold text-[#575757]">Full Name</Text>
+              <Controller
+                control={signupForm.control}
+                name="full_name"
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error: fieldError },
+                }) => (
+                  <>
+                    <TextInput
+                      className={cn(
+                        'h-16 rounded-lg border border-transparent bg-accent p-5 pl-5 text-foreground',
+                        fieldError && 'border-red-500'
+                      )}
+                      placeholder="Enter full name"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                    />
+                    {fieldError && <Text className="text-red-500">{fieldError.message}</Text>}
+                  </>
+                )}
+              />
+            </View>
+
+            <View className="flex w-full flex-col gap-2">
               <Text className="font-semibold text-[#575757]">Email Address</Text>
-              <TextInput
-                className="h-14 rounded-lg bg-accent p-5 pl-5 text-foreground"
-                placeholder="Enter email address"
+              <Controller
+                control={signupForm.control}
+                name="email"
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error: fieldError },
+                }) => (
+                  <>
+                    <TextInput
+                      className={cn(
+                        'h-16 rounded-lg border border-transparent bg-accent p-5 pl-5 text-foreground',
+                        fieldError && 'border-red-500'
+                      )}
+                      placeholder="Enter email address"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                    />
+                    {fieldError && <Text className="text-red-500">{fieldError.message}</Text>}
+                  </>
+                )}
               />
             </View>
 
             <View className="flex w-full flex-col gap-2">
               <Text className="font-semibold text-[#575757]">Password</Text>
 
-              <View className="flex h-14 w-full flex-row items-center justify-between rounded-lg bg-accent pl-5 pr-5">
-                <TextInput
-                  className="max-w-[90%] text-foreground"
-                  placeholder="*********"
-                  secureTextEntry={!showPassword}
-                />
-                <TouchableHighlight
-                  onPress={() => setShowPassword(!showPassword)}
-                  underlayColor="transparent">
-                  {showPassword ? (
-                    <EyeOff color="#F86241" size={20} />
-                  ) : (
-                    <Eye color="#F86241" size={20} />
-                  )}
-                </TouchableHighlight>
-              </View>
+              <Controller
+                control={signupForm.control}
+                name="password"
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error: fieldError },
+                }) => (
+                  <>
+                    <View
+                      className={cn(
+                        'flex h-16 w-full flex-row items-center justify-between rounded-lg border border-transparent bg-accent pl-5 pr-5',
+                        fieldError && 'border-red-500'
+                      )}>
+                      <TextInput
+                        className="max-w-[90%] text-foreground"
+                        placeholder="*********"
+                        secureTextEntry={!showPassword}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                      />
+
+                      <TouchableHighlight
+                        onPress={() => setShowPassword(!showPassword)}
+                        underlayColor="transparent">
+                        {showPassword ? (
+                          <EyeOff color="#F86241" size={20} />
+                        ) : (
+                          <Eye color="#F86241" size={20} />
+                        )}
+                      </TouchableHighlight>
+                    </View>
+                    {fieldError && <Text className="text-red-500">{fieldError.message}</Text>}
+                  </>
+                )}
+              />
             </View>
 
             <View className="flex w-full flex-col gap-2">
               <Text className="font-semibold text-[#575757]">Confirm Password</Text>
 
-              <View className="flex h-14 w-full flex-row items-center justify-between rounded-lg bg-accent pl-5 pr-5">
-                <TextInput
-                  className="max-w-[90%] text-foreground"
-                  placeholder="*********"
-                  secureTextEntry={!showConfirmPassword}
-                />
-                <TouchableHighlight
-                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                  underlayColor="transparent">
-                  {showConfirmPassword ? (
-                    <EyeOff color="#F86241" size={20} />
-                  ) : (
-                    <Eye color="#F86241" size={20} />
-                  )}
-                </TouchableHighlight>
-              </View>
+              <Controller
+                control={signupForm.control}
+                name="confirm_password"
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error: fieldError },
+                }) => (
+                  <>
+                    <View
+                      className={cn(
+                        'flex h-16 w-full flex-row items-center justify-between rounded-lg border border-transparent bg-accent pl-5 pr-5',
+                        fieldError && 'border-red-500'
+                      )}>
+                      <TextInput
+                        className="max-w-[90%] text-foreground"
+                        placeholder="*********"
+                        secureTextEntry={!showConfirmPassword}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                      />
+                      <TouchableHighlight
+                        onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                        underlayColor="transparent">
+                        {showConfirmPassword ? (
+                          <EyeOff color="#F86241" size={20} />
+                        ) : (
+                          <Eye color="#F86241" size={20} />
+                        )}
+                      </TouchableHighlight>
+                    </View>
+                    {fieldError && <Text className="text-red-500">{fieldError.message}</Text>}
+                  </>
+                )}
+              />
             </View>
 
+            {error && <Text className="mt-4 text-center text-red-500">{error}</Text>}
+
             <View className="flex w-full flex-col gap-5 py-6">
-              <TouchableHighlight className="flex items-center justify-center rounded-full bg-primary px-4 py-4 shadow-sm">
-                <Text className="text-lg font-bold text-white">Register</Text>
+              <TouchableHighlight
+                onPress={signupForm.handleSubmit(handleSignup)}
+                disabled={loading}
+                className="flex items-center justify-center rounded-full bg-primary px-4 py-4 shadow-sm">
+                <Text className="text-lg font-bold text-white">
+                  {loading ? 'Registering...' : 'Register'}
+                </Text>
               </TouchableHighlight>
 
               <View className="flex flex-row items-center gap-4">
