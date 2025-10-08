@@ -5,6 +5,7 @@ import { Eye, EyeOff } from 'lucide-react-native';
 import { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import { z } from 'zod';
 
 export default function Index() {
   const router = useRouter();
