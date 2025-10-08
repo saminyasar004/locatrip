@@ -1,6 +1,7 @@
 import Layout from 'components/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useAuth } from 'hooks/useAuth';
 import {
   Bell,
   Calendar,
@@ -13,12 +14,14 @@ import {
   Share2Icon,
   Star,
 } from 'lucide-react-native';
-import { useState } from 'react';
-import { Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { cn } from 'utils';
 
 export default function Index() {
+  const { isAuthenticated, user, loading } = useAuth();
+
   const router = useRouter();
 
   const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
@@ -48,6 +51,23 @@ export default function Index() {
   ];
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+  useEffect(() => {
+    if (!loading && (!isAuthenticated || !user)) {
+      console.log('User is not authenticated, redirecting to login.');
+      router.replace('/auth/login'); // Use replace to avoid back button issues
+    }
+  }, [isAuthenticated, user, loading]);
+
+  // Show loading while auth initializes
+  if (loading || !isAuthenticated || !user) {
+    return (
+      <Layout>
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#F86241" />
+        </View>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <View className="row flex h-auto min-h-full w-full flex-1 flex-col items-start">
@@ -60,7 +80,7 @@ export default function Index() {
             {/* Greetings */}
             <View className="flex flex-col gap-0">
               <Text>Good Evening!</Text>
-              <Text className="text-2xl font-semibold">Sarah Jonson</Text>
+              <Text className="text-2xl font-semibold">{user?.full_name}</Text>
             </View>
           </View>
           {/* Notification */}
