@@ -12,7 +12,11 @@
     "build:apk": "eas build -p android --profile"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/datetimepicker": "8.4.1",
+    "@tanstack/react-query": "^5.90.2",
+    "axios": "^1.12.2",
     "clsx": "^2.1.1",
     "expo": "^53.0.20",
     "expo-linear-gradient": "~14.1.5",
@@ -23,6 +27,7 @@
     "lucide-react-native": "^0.536.0",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
+    "react-hook-form": "^7.64.0",
     "react-native": "0.79.5",
     "react-native-bouncy-checkbox": "^4.1.2",
     "react-native-dropdown-picker": "^5.4.6",
@@ -33,7 +38,9 @@
     "react-native-screens": "~4.11.1",
     "react-native-svg": "15.11.2",
     "react-native-tab-view": "^4.1.3",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.1.12",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
