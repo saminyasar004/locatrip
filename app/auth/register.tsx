@@ -40,7 +40,7 @@ export default function Index() {
       await register(formData);
 
       if (!useAuthStore.getState().error) {
-        router.replace('/home');
+        router.replace('/personalize/step1');
 
         Toast.success('Successfully registered!');
       }
