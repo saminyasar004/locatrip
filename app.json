@@ -21,7 +21,12 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#fbfefe"
+      },
+      "package": "com.saminyasar004.locatrip"
     },
     "android": {
       "adaptiveIcon": {
