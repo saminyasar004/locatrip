@@ -1,14 +1,15 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import useAuthStore from 'app/store/authStore';
 import AppleImg from 'assets/apple.svg';
 import GoogleImg from 'assets/google.svg';
 import { useRouter } from 'expo-router';
-import { useAuth } from 'hooks/useAuth';
 import { Eye, EyeOff } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
-import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { cn, getLocalStorageItem } from 'utils';
+import { SafeAreaView, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { Toast } from 'toastify-react-native';
+import { cn } from 'utils';
+import { z } from 'zod';
 
 const signupSchema = z
   .object({
@@ -25,7 +26,7 @@ const signupSchema = z
 type SignupForm = z.infer<typeof signupSchema>;
 
 export default function Index() {
-  const { isAuthenticated, login, register, loading, error, user } = useAuth();
+  const { register, isLoading, error, user, isAuthenticated } = useAuthStore();
 
   const signupForm = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
@@ -36,33 +37,29 @@ export default function Index() {
     console.log('Registering with data:', formData);
 
     try {
-      const response = await register(
-        formData.full_name,
-        formData.email,
-        formData.password,
-        formData.confirm_password
-      );
-      console.log('It is from signup page.');
-      console.log(response);
-      // Access the user from the response directly
-      console.log('User from response:', response.user);
-    } catch (err) {
-      console.error('Registration error:', err);
+      await register(formData);
+
+      if (!useAuthStore.getState().error) {
+        router.replace('/home');
+
+        Toast.success('Successfully registered!');
+      }
+      console.log('Successfully registered!');
+    } catch (err: any) {
+      console.log('Error occured while handling signup form: ', err.message);
+      useAuthStore.setState({ error: err.message });
+      Toast.error(err.message || 'Signup failed');
     }
   };
 
   useEffect(() => {
-    if (isAuthenticated && user) {
-      console.log('User from updated state:', user);
-      console.log('Access token from local storage:');
-      getLocalStorageItem('access_token').then((token) => {
-        if (token) {
-          console.log('Token found on registering page:', token);
-          router.push('/');
-        }
-      });
-    }
-  }, [isAuthenticated, user]);
+    console.log({
+      isLoading,
+      user,
+      isAuthenticated,
+      error,
+    });
+  }, [isLoading, user, error, isAuthenticated]);
 
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -219,10 +216,11 @@ export default function Index() {
             <View className="flex w-full flex-col gap-5 py-6">
               <TouchableHighlight
                 onPress={signupForm.handleSubmit(handleSignup)}
-                disabled={loading}
+                disabled={isLoading}
                 className="flex items-center justify-center rounded-full bg-primary px-4 py-4 shadow-sm">
                 <Text className="text-lg font-bold text-white">
-                  {loading ? 'Registering...' : 'Register'}
+                  {isLoading ? 'Registering...' : 'Register'}
+                  {/* Register */}
                 </Text>
               </TouchableHighlight>
 

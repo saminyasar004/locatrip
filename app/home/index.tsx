@@ -1,7 +1,7 @@
+import useAuthStore from 'app/store/authStore';
 import Layout from 'components/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { useAuth } from 'hooks/useAuth';
 import {
   Bell,
   Calendar,
@@ -20,7 +20,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { cn } from 'utils';
 
 export default function Index() {
-  const { isAuthenticated, user, loading, accessToken } = useAuth();
+  const { isAuthenticated, isLoading, user, accessToken, error } = useAuthStore();
 
   const router = useRouter();
 
@@ -53,17 +53,17 @@ export default function Index() {
 
   useEffect(() => {
     console.log(
-      `homepage: user access key: ${accessToken}\n and user is: ${user} \n and loading is: ${loading}\n and isAuthenticated is: ${isAuthenticated}`
+      `homepage: user access key: ${accessToken}\n and user is: ${user} \n and loading is: ${isLoading}\n and isAuthenticated is: ${isAuthenticated}`
     );
 
-    if (!loading && !accessToken) {
+    if (!isLoading && !accessToken) {
       console.log('User is not authenticated, redirecting to login.');
       router.replace('/auth/login'); // Use replace to avoid back button issues
     }
-  }, [isAuthenticated, user, loading, accessToken]);
+  }, [isAuthenticated, user, isLoading, accessToken]);
 
   // Show loading while auth initializes
-  if (loading || !accessToken || !isAuthenticated || !user) {
+  if (isLoading || !accessToken || !isAuthenticated || !user) {
     return (
       <Layout>
         <View className="h-screen w-full flex-1 items-center justify-center">
@@ -72,6 +72,7 @@ export default function Index() {
       </Layout>
     );
   }
+
   return (
     <Layout>
       <View className="row flex h-auto min-h-full w-full flex-1 flex-col items-start">
