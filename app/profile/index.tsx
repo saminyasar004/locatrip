@@ -1,3 +1,4 @@
+import useAuthStore from 'app/store/authStore';
 import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
 import {
@@ -12,10 +13,19 @@ import {
   UserRound,
   Wallet,
 } from 'lucide-react-native';
+import { useEffect } from 'react';
 import { Image, SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
 
 export default function Index() {
   const router = useRouter();
+  const { user, isAuthenticated, isLoading, accessToken, logout } = useAuthStore();
+
+  useEffect(() => {
+    if (!isLoading && !accessToken) {
+      console.log('User is not authenticated, redirecting to login.');
+      router.replace('/auth/login'); // Use replace to avoid back button issues
+    }
+  }, [isAuthenticated, user, isLoading, accessToken]);
 
   return (
     <Layout>
@@ -30,8 +40,8 @@ export default function Index() {
                 </View>
                 {/* Greetings */}
                 <View className="flex flex-col gap-0">
-                  <Text className="text-2xl font-semibold text-white">Sarah Jonson</Text>
-                  <Text className="text-white">sarah.jonson@gmail.com</Text>
+                  <Text className="text-2xl font-semibold text-white">{user?.full_name}</Text>
+                  <Text className="text-white">{user?.email}</Text>
                 </View>
               </View>
             </View>
@@ -170,7 +180,10 @@ export default function Index() {
 
               <View className="flex w-full items-center justify-center pt-8">
                 <TouchableHighlight
-                  onPress={() => router.push('/auth/login')}
+                  onPress={() => {
+                    logout();
+                    router.push('/auth/login');
+                  }}
                   underlayColor={'transparent'}
                   className="flex w-full flex-1 items-center justify-center">
                   <View className="flex w-full flex-row items-center justify-center gap-3 rounded-full border-2 border-primary p-3">
