@@ -20,7 +20,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { cn } from 'utils';
 
 export default function Index() {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, user, loading, accessToken } = useAuth();
 
   const router = useRouter();
 
@@ -52,17 +52,21 @@ export default function Index() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!loading && (!isAuthenticated || !user)) {
+    console.log(
+      `homepage: user access key: ${accessToken}\n and user is: ${user} \n and loading is: ${loading}\n and isAuthenticated is: ${isAuthenticated}`
+    );
+
+    if (!loading && !accessToken) {
       console.log('User is not authenticated, redirecting to login.');
       router.replace('/auth/login'); // Use replace to avoid back button issues
     }
-  }, [isAuthenticated, user, loading]);
+  }, [isAuthenticated, user, loading, accessToken]);
 
   // Show loading while auth initializes
-  if (loading || !isAuthenticated || !user) {
+  if (loading || !accessToken || !isAuthenticated || !user) {
     return (
       <Layout>
-        <View className="flex-1 items-center justify-center">
+        <View className="h-screen w-full flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#F86241" />
         </View>
       </Layout>

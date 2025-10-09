@@ -55,8 +55,12 @@ export default function Index() {
     if (isAuthenticated && user) {
       console.log('User from updated state:', user);
       console.log('Access token from local storage:');
-      console.log(getLocalStorageItem('access_token'));
-      router.push('/');
+      getLocalStorageItem('access_token').then((token) => {
+        if (token) {
+          console.log('Token found on registering page:', token);
+          router.push('/');
+        }
+      });
     }
   }, [isAuthenticated, user]);
 

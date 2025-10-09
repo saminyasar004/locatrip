@@ -29,16 +29,19 @@ export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // <-- Start as true
   const [error, setError] = useState<string | null>(null);
 
   // Check token on mount
   useEffect(() => {
+    setLoading(true);
     getLocalStorageItem('access_token').then((token) => {
       if (token) {
         setAccessToken(token);
         setIsAuthenticated(true);
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       }
+      setLoading(false);
     });
   }, []);
 
@@ -52,13 +55,14 @@ export const useAuth = () => {
       const { data } = await apiClient.get('/api/profile/');
       return data;
     },
-    enabled: isAuthenticated,
+    enabled: !!accessToken,
   });
 
   // Handle success side effect (runs when data changes)
   useEffect(() => {
     if (profileData) {
       setUser(profileData);
+      setIsAuthenticated(true);
       setError(null); // Clear any prior errors
     }
   }, [profileData]);
@@ -69,6 +73,7 @@ export const useAuth = () => {
       setError(profileError.message);
       removeLocalStorageItem('access_token');
       setIsAuthenticated(false);
+      setUser(null);
     }
   }, [profileError]);
 
@@ -93,6 +98,7 @@ export const useAuth = () => {
       setIsAuthenticated(true);
       setError(null);
       setLoading(false);
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${data.access}`;
     },
     onError: (err) => {
       const errorMsg = (err as any).response?.data?.[0] || 'Signup failed';
@@ -124,6 +130,7 @@ export const useAuth = () => {
       setIsAuthenticated(true);
       setError(null);
       setLoading(false);
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${data.access}`;
     },
     onError: (err) => {
       const errorMsg = (err as any).response?.data?.[0] || 'Login failed';
@@ -193,7 +200,7 @@ export const useAuth = () => {
   return {
     isAuthenticated,
     accessToken,
-    user: user || profileData, // Fallback to query data
+    user,
     loading,
     error,
     login,
