@@ -26,14 +26,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#fbfefe"
       },
-      "package": "com.saminyasar004.locatrip"
+      "package": "com.saminyasar004.locatrip",
+      "bundleIdentifier": "com.saminyasar004.locatrip"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#fbfefe"
       },
-      "package": "com.saminyasar004.locatrip"
+      "package": "com.saminyasar004.locatrip",
+      "edgeToEdgeEnabled": true
     },
     "extra": {
       "router": {},
