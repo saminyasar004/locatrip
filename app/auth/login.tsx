@@ -5,7 +5,7 @@ import AppleImg from 'assets/apple.svg';
 import GoogleImg from 'assets/google.svg';
 import { useRouter } from 'expo-router';
 import { Eye, EyeOff } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { SafeAreaView, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
@@ -20,7 +20,7 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Index() {
-    const { login, user, isAuthenticated, isLoading, error } = useAuthStore();
+    const { login, user, isLoading, error } = useAuthStore();
     const { init } = useProfileStore();
 
     const router = useRouter();
@@ -32,8 +32,6 @@ export default function Index() {
     });
 
     const handleLogin = async (formData: LoginForm) => {
-        console.log('Loging with data:', formData);
-
         try {
             await login(formData);
 
@@ -41,20 +39,22 @@ export default function Index() {
                 router.replace('/home');
                 Toast.success('Successfully logged in!');
             }
-            console.log('Successfully logged in!');
-
-            if (user) {
-                init({
-                    full_name: user.full_name,
-                    email: user.email,
-                });
-            }
         } catch (err: any) {
             console.log('Error occured while handling login form: ', err.message);
             useAuthStore.setState({ error: err.message });
             Toast.error(err.message || 'Login failed');
         }
     };
+
+    useEffect(() => {
+        if (user) {
+            init({
+                email: user.email,
+                full_name: user.full_name,
+                image: null,
+            });
+        }
+    }, [user]);
 
     return (
         <SafeAreaView className="bg-primary">

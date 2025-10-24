@@ -46,15 +46,15 @@ const useAuthStore = create<AuthState>((set, get) => ({
     //   login action
     login: async (userData) => {
         set({ isLoading: true, error: null });
+        console.log("Logging in with data:", userData);
         try {
             const response = await axios.post(`${baseURL}/api/login/`, userData, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            // Adjust this according to your backend's response structure
             const { access, user } = response.data;
-            // Save token securely
             console.log('Login response:', response.data);
             await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, access);
+
             set({
                 user,
                 accessToken: access,
@@ -63,6 +63,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
                 error: null,
             });
         } catch (error: any) {
+            console.log('Login error:', error?.response?.data || error.message);
             set({
                 error: error?.response?.data?.message || error.message || 'Login failed',
                 isLoading: false,

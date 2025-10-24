@@ -147,7 +147,7 @@ export default function Index() {
                         fieldError && 'border-red-500'
                       )}>
                       <TextInput
-                        className="max-w-[90%] text-foreground"
+                        className="flex-1 text-foreground"
                         placeholder="*********"
                         secureTextEntry={!showPassword}
                         onBlur={onBlur}
@@ -188,7 +188,7 @@ export default function Index() {
                         fieldError && 'border-red-500'
                       )}>
                       <TextInput
-                        className="max-w-[90%] flex-1 text-foreground"
+                        className="flex-1 text-foreground"
                         placeholder="*********"
                         secureTextEntry={!showConfirmPassword}
                         onBlur={onBlur}
