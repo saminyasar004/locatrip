@@ -1,4 +1,5 @@
 import useAuthStore from 'app/store/authStore';
+import useProfileStore from 'app/store/profileStore';
 import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
 import {
@@ -19,6 +20,7 @@ import { Image, SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 
 export default function Index() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading, accessToken, logout } = useAuthStore();
+  // const { full_name, email, image } = useProfileStore();
 
   useEffect(() => {
     if (!isLoading && !accessToken) {

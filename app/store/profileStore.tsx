@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { baseURL } from 'config';
 import { create } from 'zustand';
+import useAuthStore from './authStore';
 
 interface ProfileState {
   full_name: string;
@@ -20,15 +21,20 @@ const useProfileStore = create<ProfileState>((set, get) => ({
   error: null,
 
   updateProfile: async (profileData: ProfileState) => {
+    const accessToken = useAuthStore.getState().accessToken;
     set({ isLoading: true, error: null });
     try {
       const formData = new FormData();
-      formData.append('full_name', profileData.full_name);
-      formData.append('email', profileData.email);
+      if (profileData.full_name) formData.append('full_name', profileData.full_name);
+      if (profileData.email) formData.append('email', profileData.email);
       if (profileData.image) formData.append('image', profileData.image);
+      console.log('FormData being sent:', formData);
+      console.log('Access Token:', accessToken);
       const response = await axios.patch(`${baseURL}/api/profile/`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${accessToken}` },
       });
+
+      console.log('Profile update response:', response.data);
 
       // Adjust this according to your backend's response structure
       const { full_name, email, image } = response.data;

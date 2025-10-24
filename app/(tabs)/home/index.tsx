@@ -108,8 +108,8 @@ export default function Index() {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={{ borderRadius: 10 }}
-            className="h-full w-full rounded-lg p-3">
-            <View className="flex w-full flex-row items-center justify-between gap-3">
+            className="h-full w-full rounded-lg">
+            <View className="flex w-full flex-row items-center justify-between gap-3 p-3 pb-0">
               <View className="flex flex-col gap-2">
                 <Text className="text-lg font-semibold text-white">Costa Rica</Text>
                 <View className="flex w-full flex-row items-center gap-3">
@@ -130,7 +130,7 @@ export default function Index() {
               </View>
             </View>
 
-            <View className="flex flex-col items-center gap-2 py-8">
+            <View className="flex flex-col items-center gap-2 px-3 py-8">
               <View className="flex w-full flex-row items-center justify-between">
                 <Text className="text-base text-white">Trip Planning Progress</Text>
                 <Text className="text-lg font-medium text-white">75% Complete</Text>

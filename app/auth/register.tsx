@@ -184,11 +184,11 @@ export default function Index() {
                   <>
                     <View
                       className={cn(
-                        'flex h-16 w-full flex-row items-center justify-between rounded-lg border border-transparent bg-accent pl-5 pr-5',
+                        'flex h-16 w-full flex-1 flex-row items-center justify-between rounded-lg border border-transparent bg-accent pl-5 pr-5',
                         fieldError && 'border-red-500'
                       )}>
                       <TextInput
-                        className="max-w-[90%] text-foreground"
+                        className="max-w-[90%] flex-1 text-foreground"
                         placeholder="*********"
                         secureTextEntry={!showConfirmPassword}
                         onBlur={onBlur}

@@ -1,10 +1,27 @@
+import useProfileStore from 'app/store/profileStore';
 import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Search, SquarePen, Star } from 'lucide-react-native';
+import { useState } from 'react';
 import { Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
 
 export default function Index() {
+  const { updateProfile } = useProfileStore();
   const router = useRouter();
+
+  const [profileData, setProfileData] = useState<{ full_name?: string; email?: string }>({});
+  const updatePersonalInfo = async () => {
+    console.log('Updating profile with data:', profileData);
+    try {
+      await updateProfile(profileData as any);
+      if (!useProfileStore.getState().error) {
+        console.log('Profile updated successfully!');
+        router.push('/(tabs)/profile');
+      }
+    } catch (err: any) {
+      console.log('Error occured while handling login form: ', err.message);
+    }
+  };
 
   return (
     <Layout>
@@ -33,7 +50,12 @@ export default function Index() {
           <View className="my-2 flex w-full flex-col gap-2">
             <Text className="font-medium text-[#575757]">Full Name</Text>
             <View className="flex h-14 w-full flex-row items-center justify-start gap-3 rounded-lg bg-accent px-5">
-              <TextInput className="max-w-[90%] text-foreground" placeholder="Enter your name" />
+              <TextInput
+                className="max-w-[90%] text-foreground"
+                placeholder="Enter your name"
+                value={profileData.full_name}
+                onChangeText={(text) => setProfileData({ ...profileData, full_name: text })}
+              />
             </View>
           </View>
 
@@ -49,7 +71,7 @@ export default function Index() {
 
           <View className="flex w-full items-center justify-center py-5">
             <TouchableHighlight
-              onPress={() => router.push('/personalize/step2')}
+              onPress={updatePersonalInfo}
               className="flex w-full items-center justify-center rounded-full bg-primary p-3 shadow-sm">
               <Text className="text-lg font-bold text-white">Edit Details</Text>
             </TouchableHighlight>

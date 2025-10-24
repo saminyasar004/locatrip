@@ -1,3 +1,4 @@
+import usePersonalizeStore from 'app/store/personalizeStore';
 import { useRouter } from 'expo-router';
 import { Check, Plus } from 'lucide-react-native';
 import { useState } from 'react';
@@ -10,28 +11,29 @@ interface PersonalizeItemProps {
   isChecked: boolean;
 }
 
+interface PreferenceIdType {
+  id: number;
+}
+
 export default function Index() {
   const router = useRouter();
   const [count, setCount] = useState(0);
   const [personalizeItems, setPersonalizeItems] = useState<PersonalizeItemProps[]>([
     { id: 1, title: 'Hiking & Trekking', isChecked: false },
     { id: 2, title: 'Art', isChecked: false },
-    { id: 3, title: 'Mountaineering', isChecked: false },
-    { id: 4, title: 'Animals', isChecked: false },
+    { id: 3, title: 'Animals', isChecked: false },
+    { id: 4, title: 'Mountaineering', isChecked: false },
     { id: 5, title: 'Solo Adventure', isChecked: false },
-    { id: 6, title: 'Local Festivals & Events', isChecked: false },
-    { id: 7, title: 'Food & Drink', isChecked: false },
+    { id: 7, title: 'Local Festivals & Events', isChecked: false },
+    { id: 6, title: 'Food & Drink', isChecked: false },
     { id: 8, title: 'Swimming', isChecked: false },
-    { id: 9, title: 'Camping in Nature', isChecked: false },
-    { id: 10, title: 'Sunset Cruises', isChecked: false },
-    { id: 11, title: 'Romantic Resorts', isChecked: false },
-    { id: 12, title: 'Luxury Hotels & Resorts', isChecked: false },
-    { id: 13, title: 'Architectural Sites', isChecked: false },
-    { id: 14, title: 'Historical Site Visits', isChecked: false },
-    { id: 15, title: 'Religious and Cultural Festivals', isChecked: false },
-    { id: 16, title: 'Coastal Routes', isChecked: false },
-    { id: 17, title: 'Organic Food Markets', isChecked: false },
-    { id: 18, title: 'Green Hotels', isChecked: false },
+    { id: 9, title: 'Sunset Cruises', isChecked: false },
+    { id: 10, title: 'Romantic Resorts', isChecked: false },
+    { id: 11, title: 'Luxury Hotels & Resorts', isChecked: false },
+    { id: 12, title: 'Historical Site Visits', isChecked: false },
+    { id: 13, title: 'Religious and Cultural Festivals', isChecked: false },
+    { id: 14, title: 'Organic Food Markets', isChecked: false },
+    { id: 15, title: 'Green Hotels', isChecked: false },
   ]);
 
   const addItemToPersonalize = (item: PersonalizeItemProps) => {
@@ -41,6 +43,22 @@ export default function Index() {
       )
     );
     setCount((prevCount) => (item.isChecked ? prevCount - 1 : prevCount + 1));
+  };
+
+  const selectedItems = personalizeItems.filter((item) => item.isChecked);
+  console.log('Selected Items:', selectedItems);
+
+  const { createPreference } = usePersonalizeStore();
+
+  const handlePersonalizeNext = async () => {
+    const selectedPersonalizeItems: PreferenceIdType[] = personalizeItems
+      .filter((item) => item.isChecked)
+      .map((item) => item.id as PreferenceIdType);
+    console.log('Selected Items on Next:', selectedPersonalizeItems);
+
+    await createPreference(selectedPersonalizeItems);
+
+    router.push('/personalize/step2');
   };
 
   return (
@@ -99,7 +117,7 @@ export default function Index() {
 
             <View className="flex w-full items-center justify-center py-3">
               <TouchableHighlight
-                onPress={() => router.push('/personalize/step2')}
+                onPress={handlePersonalizeNext}
                 className="flex w-full items-center justify-center rounded-full bg-primary p-3 shadow-sm">
                 <Text className="text-lg font-bold text-white">Next ({count})</Text>
               </TouchableHighlight>
