@@ -26,6 +26,7 @@ export default function Index() {
         setLoading(true);
         try {
             const response = await axios.post(`${baseURL}/api/support/submit/`, payload, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
 
