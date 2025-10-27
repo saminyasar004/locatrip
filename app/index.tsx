@@ -3,31 +3,50 @@ import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaView, View } from 'react-native';
 import useAuthStore from './store/authStore';
+import useProfileStore from './store/profileStore';
 
 export default function App() {
-  const { user, isAuthenticated, accessToken, isLoading } = useAuthStore();
+    const { user, isAuthenticated, clearError, accessToken, isLoading, fetchProfile } =
+        useAuthStore();
 
-  const router = useRouter();
+    const { init } = useProfileStore();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!user || !isAuthenticated || !accessToken) {
-        if (!isLoading) {
-          router.replace('/onboarding');
-        }
-        return;
-      }
+    const router = useRouter();
 
-      router.replace('/home');
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [router]);
+    useEffect(() => {
+        (async () => {
+            try {
+                await fetchProfile();
+                console.log('Profile fetched successfully on app load.');
+            } catch (error) {
+                console.log('Error fetching profile on app load:', error);
+            }
+            clearError();
+        })();
+    }, []);
 
-  return (
-    <SafeAreaView>
-      <View className="row table h-screen items-center justify-center">
-        <SVGImg width={200} height={200} />
-      </View>
-    </SafeAreaView>
-  );
+    useEffect(() => {
+        if (isLoading) return;
+
+        setTimeout(() => {
+            if (isAuthenticated && user && accessToken) {
+                init({
+                    full_name: user.full_name,
+                    email: user.email,
+                    image: null,
+                });
+                router.replace('/(tabs)/home');
+            } else {
+                router.replace('/auth/login');
+            }
+        }, 300);
+    }, [isAuthenticated, user, isLoading]);
+
+    return (
+        <SafeAreaView>
+            <View className="row table h-screen items-center justify-center">
+                <SVGImg width={200} height={200} />
+            </View>
+        </SafeAreaView>
+    );
 }
