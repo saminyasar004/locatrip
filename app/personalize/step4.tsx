@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { set } from 'zod';
 
 export default function Index() {
   const router = useRouter();
@@ -28,9 +29,9 @@ export default function Index() {
     { label: 'Group', value: 'group' },
   ]);
   const [budget, setBudget] = useState([
-    { label: '$50/100 day', value: 'low' },
-    { label: '$100/200 day', value: 'medium' },
-    { label: '$300/500 day', value: 'high' },
+    { label: '$50/100 day', value: '50-100+' },
+    { label: '$100/200 day', value: '100-200+' },
+    { label: '$300/500 day', value: '300-500+' },
   ]);
   const [duration, setDuration] = useState([
     { label: '3 days', value: '3-days' },
@@ -39,6 +40,19 @@ export default function Index() {
     { label: '10 days', value: '10-days' },
     { label: '2 weeks', value: '2-weeks' },
   ]);
+
+  // Chages by Swadhin
+  const [planData, setPlanData] = useState({
+    destination_name: '',
+    latitude: 22.845641,
+    longitude: 89.540328,
+    trip_type: '',
+    budget: '',
+    startDate: '',
+    endDate: '',
+  });
+  console.log('Plan Data:', planData);
+  console.log('Picked Trip Type:', pickedTripType);
 
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
@@ -50,6 +64,7 @@ export default function Index() {
     const currentDate = selectedDate || startDate;
     setShowStartDatePicker(false); // Hide picker after selection
     setStartDate(currentDate);
+    setPlanData({ ...planData, startDate: currentDate.toISOString() });
   };
 
   const onEndDateChange = (event: DateTimePickerEvent, selectedDate?: Date | undefined) => {
@@ -57,6 +72,7 @@ export default function Index() {
     const currentDate = selectedDate || startDate;
     setShowEndDatePicker(false); // Hide picker after selection
     setEndDate(currentDate);
+    setPlanData({ ...planData, endDate: currentDate.toISOString() });
   };
 
   return (
@@ -85,6 +101,8 @@ export default function Index() {
               <TextInput
                 className="h-14 rounded-lg bg-accent p-5 pl-5 text-foreground"
                 placeholder="Enter destination"
+                value={planData.destination_name}
+                onChangeText={(text) => setPlanData({ ...planData, destination_name: text })}
               />
             </View>
 
@@ -92,10 +110,15 @@ export default function Index() {
               <Text className="text-lg font-semibold text-[#575757]">Trip Type</Text>
               <DropDownPicker
                 open={isTripTypePickerOpen}
-                value={pickedTripType}
+                value={planData.trip_type}
                 items={tripType}
                 setOpen={setIsTripTypePickerOpen}
-                setValue={setPickedTripType}
+                setValue={(callback) =>
+                  setPlanData({
+                    ...planData,
+                    trip_type: callback(planData.trip_type),
+                  })
+                }
                 setItems={setTripType}
                 placeholder="Choose your trip type"
                 style={{
@@ -128,10 +151,12 @@ export default function Index() {
               <Text className="text-lg font-semibold text-[#575757]">Budget</Text>
               <DropDownPicker
                 open={isBudgetPickerOpen}
-                value={pickedBudget}
+                value={planData.budget}
                 items={budget}
                 setOpen={setIsBudgetPickerOpen}
-                setValue={setPickedBudget}
+                setValue={(callback) =>
+                  setPlanData({ ...planData, budget: callback(planData.budget) })
+                }
                 setItems={setBudget}
                 placeholder="Pick your daily budget range"
                 style={{

@@ -37,27 +37,24 @@ interface AuthState {
 const ACCESS_TOKEN_KEY = 'access_token';
 
 const useAuthStore = create<AuthState>((set, get) => ({
-    user: {
-        email: "random@gmail.com",
-        full_name: "Random User",
-        id: 1,
-    },
-    accessToken: "blah",
-    isAuthenticated: true,
-    isLoading: false,
+    user: null,
+    accessToken: null,
+    isAuthenticated: false,
+    isLoading: true,
     error: null,
 
     //   login action
     login: async (userData) => {
         set({ isLoading: true, error: null });
+        console.log("Logging in with data:", userData);
         try {
             const response = await axios.post(`${baseURL}/api/login/`, userData, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            // Adjust this according to your backend's response structure
             const { access, user } = response.data;
-            // Save token securely
+            console.log('Login response:', response.data);
             await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, access);
+
             set({
                 user,
                 accessToken: access,
@@ -66,6 +63,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
                 error: null,
             });
         } catch (error: any) {
+            console.log('Login error:', error?.response?.data || error.message);
             set({
                 error: error?.response?.data?.message || error.message || 'Login failed',
                 isLoading: false,
@@ -83,7 +81,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
                 headers: { 'Content-Type': 'application/json' },
                 timeout: 10000, // 10 seconds timeout
             });
-            console.log('Register response:', response.data);
+
             // Adjust this according to your backend's response structure
             const { access, user } = response.data;
             // Save token securely
@@ -109,6 +107,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             const token = get().accessToken || (await SecureStore.getItemAsync(ACCESS_TOKEN_KEY));
+            console.log('Using access token:', token);
             if (!token) throw new Error('No access token found');
             const response = await axios.get(`${baseURL}/api/profile/`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -120,6 +119,8 @@ const useAuthStore = create<AuthState>((set, get) => ({
                 error: null,
                 accessToken: token,
             });
+
+            console.log('Fetched profile:', get().user);
         } catch (error: any) {
             set({
                 error: error?.response?.data?.message || error.message || 'Failed to fetch profile',
