@@ -25,7 +25,7 @@ export default function Index() {
               <Search size={20} color="#808284" />
             </TouchableHighlight>
             <TextInput
-              className="max-w-[90%] text-foreground"
+              className="max-w-[90%] text-foreground placeholder:text-[#63707C]"
               placeholder="Search for local festivals & events"
             />
           </View>

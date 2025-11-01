@@ -81,7 +81,7 @@ export default function Index() {
                                 }) => (
                                     <>
                                         <TextInput
-                                            className={`h-16 rounded-lg bg-accent p-5 pl-5 text-foreground ${fieldError ? 'border border-red-500' : ''}`}
+                      className={`h-16 rounded-lg bg-accent p-5 pl-5 text-foreground placeholder:text-[#63707C] ${fieldError ? 'border border-red-500' : ''}`}
                                             placeholder="Enter email address"
                                             onBlur={onBlur}
                                             onChangeText={onChange}
@@ -108,7 +108,7 @@ export default function Index() {
                                         <View
                                             className={`flex h-16 w-full flex-row items-center justify-between overflow-hidden rounded-lg bg-accent pl-5 pr-5 ${fieldError ? 'border border-red-500' : ''}`}>
                                             <TextInput
-                                                className="flex-1 text-foreground"
+                        className="flex-1 text-foreground placeholder:text-[#63707C]"
                                                 placeholder="*********"
                                                 secureTextEntry={!showPassword}
                                                 onBlur={onBlur}

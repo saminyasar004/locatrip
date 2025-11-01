@@ -5,7 +5,7 @@ export default function Index() {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="bg-primary">
+    <SafeAreaView className="h-full w-full flex-1 bg-primary pt-6">
       <ScrollView className="h-full w-full" contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex min-h-max w-full flex-col gap-4">
           <View className="row gap-3 py-12">
@@ -22,7 +22,7 @@ export default function Index() {
               {Array.from({ length: 4 }, (_, i) => (
                 <TextInput
                   key={i}
-                  className="h-20 w-20 rounded-2xl bg-accent p-5 pl-5 text-center text-4xl font-medium text-foreground"
+                  className="h-20 w-20 rounded-2xl bg-accent p-5 pl-5 text-center text-4xl font-medium text-foreground placeholder:text-[#63707C]"
                   placeholder="-"
                   placeholderTextColor="#0F0F0F"
                 />

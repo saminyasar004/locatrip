@@ -90,7 +90,7 @@ export default function Index() {
                   <>
                     <TextInput
                       className={cn(
-                        'h-16 rounded-lg border border-transparent bg-accent p-5 pl-5 text-foreground',
+                        'h-16 rounded-lg border border-transparent bg-accent p-5 pl-5 text-foreground placeholder:text-[#63707C]',
                         fieldError && 'border-red-500'
                       )}
                       placeholder="Enter full name"
@@ -116,7 +116,7 @@ export default function Index() {
                   <>
                     <TextInput
                       className={cn(
-                        'h-16 rounded-lg border border-transparent bg-accent p-5 pl-5 text-foreground',
+                        'h-16 rounded-lg border border-transparent bg-accent p-5 pl-5 text-foreground placeholder:text-[#63707C]',
                         fieldError && 'border-red-500'
                       )}
                       placeholder="Enter email address"
@@ -147,7 +147,7 @@ export default function Index() {
                         fieldError && 'border-red-500'
                       )}>
                       <TextInput
-                        className="flex-1 text-foreground"
+                        className="flex-1 text-foreground placeholder:text-[#63707C]"
                         placeholder="*********"
                         secureTextEntry={!showPassword}
                         onBlur={onBlur}
@@ -188,7 +188,7 @@ export default function Index() {
                         fieldError && 'border-red-500'
                       )}>
                       <TextInput
-                        className="flex-1 text-foreground"
+                        className="flex-1 text-foreground placeholder:text-[#63707C]"
                         placeholder="*********"
                         secureTextEntry={!showConfirmPassword}
                         onBlur={onBlur}
