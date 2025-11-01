@@ -1,69 +1,96 @@
-import usePersonalizeStore from 'app/store/personalizeStore';
+import usePersonalizeStore, { PreferenceProps } from 'app/store/personalizeStore';
 import { useRouter } from 'expo-router';
 import { Check, Plus } from 'lucide-react-native';
-import { useState } from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableHighlight,
+  View,
+} from 'react-native';
 import { cn } from 'utils';
-
-interface PersonalizeItemProps {
-  id: number;
-  title: string;
-  isChecked: boolean;
-}
-
-interface PreferenceIdType {
-  id: number;
-}
 
 export default function Index() {
   const router = useRouter();
+  const { preferenceList, fetchAllPreferences, createPreference, isLoading, error } =
+    usePersonalizeStore();
   const [count, setCount] = useState(0);
-  const [personalizeItems, setPersonalizeItems] = useState<PersonalizeItemProps[]>([
-    { id: 1, title: 'Hiking & Trekking', isChecked: false },
-    { id: 2, title: 'Art', isChecked: false },
-    { id: 3, title: 'Animals', isChecked: false },
-    { id: 4, title: 'Mountaineering', isChecked: false },
-    { id: 5, title: 'Solo Adventure', isChecked: false },
-    { id: 7, title: 'Local Festivals & Events', isChecked: false },
-    { id: 6, title: 'Food & Drink', isChecked: false },
-    { id: 8, title: 'Swimming', isChecked: false },
-    { id: 9, title: 'Sunset Cruises', isChecked: false },
-    { id: 10, title: 'Romantic Resorts', isChecked: false },
-    { id: 11, title: 'Luxury Hotels & Resorts', isChecked: false },
-    { id: 12, title: 'Historical Site Visits', isChecked: false },
-    { id: 13, title: 'Religious and Cultural Festivals', isChecked: false },
-    { id: 14, title: 'Organic Food Markets', isChecked: false },
-    { id: 15, title: 'Green Hotels', isChecked: false },
-  ]);
+  const [selectedPreferenceId, setSelectedPreferenceId] = useState<number[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const addItemToPersonalize = (item: PersonalizeItemProps) => {
-    setPersonalizeItems((prevItems) =>
-      prevItems.map((prevItem) =>
-        prevItem.id === item.id ? { ...prevItem, isChecked: !prevItem.isChecked } : prevItem
-      )
+  // const [personalizeItems, setPersonalizeItems] = useState<PersonalizeItemProps[]>([
+  //   { id: 1, title: 'Hiking & Trekking', isChecked: false },
+  //   { id: 2, title: 'Art', isChecked: false },
+  //   { id: 3, title: 'Animals', isChecked: false },
+  //   { id: 4, title: 'Mountaineering', isChecked: false },
+  //   { id: 5, title: 'Solo Adventure', isChecked: false },
+  //   { id: 7, title: 'Local Festivals & Events', isChecked: false },
+  //   { id: 6, title: 'Food & Drink', isChecked: false },
+  //   { id: 8, title: 'Swimming', isChecked: false },
+  //   { id: 9, title: 'Sunset Cruises', isChecked: false },
+  //   { id: 10, title: 'Romantic Resorts', isChecked: false },
+  //   { id: 11, title: 'Luxury Hotels & Resorts', isChecked: false },
+  //   { id: 12, title: 'Historical Site Visits', isChecked: false },
+  //   { id: 13, title: 'Religious and Cultural Festivals', isChecked: false },
+  //   { id: 14, title: 'Organic Food Markets', isChecked: false },
+  //   { id: 15, title: 'Green Hotels', isChecked: false },
+  // ]);
+
+  // const [personalizeItems, setPersonalizeItems] = useState<PreferenceProps[]>([]);
+
+  useEffect(() => {
+    fetchAllPreferences();
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchAllPreferences();
+    setRefreshing(false);
+  }, [fetchAllPreferences]);
+
+  const addPreferenceToList = (item: PreferenceProps) => {
+    setSelectedPreferenceId((prevSelectedPreferenceId) => [...prevSelectedPreferenceId, item.id]);
+    setCount((prevCount) => (item ? prevCount + 1 : prevCount - 1));
+  };
+
+  const removePreferenceFromList = (item: PreferenceProps) => {
+    setSelectedPreferenceId((prevSelectedPreferenceId) =>
+      prevSelectedPreferenceId.filter((id) => id !== item.id)
     );
-    setCount((prevCount) => (item.isChecked ? prevCount - 1 : prevCount + 1));
+    setCount((prevCount) => (item ? prevCount - 1 : prevCount + 1));
   };
 
-  const selectedItems = personalizeItems.filter((item) => item.isChecked);
-  console.log('Selected Items:', selectedItems);
-
-  const { createPreference } = usePersonalizeStore();
-
-  const handlePersonalizeNext = async () => {
-    const selectedPersonalizeItems: PreferenceIdType[] = personalizeItems
-      .filter((item) => item.isChecked)
-      .map((item) => item.id as PreferenceIdType);
-    console.log('Selected Items on Next:', selectedPersonalizeItems);
-
-    await createPreference(selectedPersonalizeItems);
-
-    router.push('/personalize/step2');
+  const handleCreatePreference = async () => {
+    try {
+      await createPreference(selectedPreferenceId);
+      router.push('/personalize/step2');
+    } catch (error: any) {
+      console.log('Error occured while handling create preference form: ', error.message);
+    }
   };
+  if (isLoading)
+    return (
+      <View className="h-full w-full flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color="#F86241" />
+      </View>
+    );
 
   return (
     <SafeAreaView className="bg-primary">
-      <ScrollView className="h-full w-full" contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            progressViewOffset={80}
+            onRefresh={onRefresh}
+            colors={['#F86241']}
+          />
+        }
+        className="h-full w-full"
+        contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex min-h-max w-full flex-col gap-4">
           <View className="row gap-3 py-12">
             <Text className="text-2xl font-bold text-white">Let's Personalize Your Adventure</Text>
@@ -80,13 +107,19 @@ export default function Index() {
             </View>
 
             <View className="flex w-full flex-row flex-wrap items-center gap-4">
-              {personalizeItems.map((item, index) => (
+              {preferenceList.map((item, index) => (
                 <TouchableHighlight
-                  onPress={() => addItemToPersonalize(item)}
+                  onPress={() => {
+                    if (selectedPreferenceId.includes(item.id)) {
+                      removePreferenceFromList(item);
+                    } else {
+                      addPreferenceToList(item);
+                    }
+                  }}
                   key={index}
                   className={cn(
                     'flex items-center justify-center rounded-full border px-4 py-1 shadow-sm',
-                    item.isChecked
+                    selectedPreferenceId.includes(item.id)
                       ? 'border-primary bg-primary'
                       : 'border-dark-gray/40 bg-background'
                   )}
@@ -95,16 +128,16 @@ export default function Index() {
                     <Text
                       className={cn(
                         'text-lg font-medium',
-                        item.isChecked ? 'text-white' : 'text-foreground'
+                        selectedPreferenceId.includes(item.id) ? 'text-white' : 'text-foreground'
                       )}>
-                      {item.title}
+                      {item.name}
                     </Text>
                     <Text
                       className={cn(
                         'text-lg font-medium',
-                        item.isChecked ? 'text-white' : 'text-foreground'
+                        selectedPreferenceId.includes(item.id) ? 'text-white' : 'text-foreground'
                       )}>
-                      {item.isChecked ? (
+                      {selectedPreferenceId.includes(item.id) ? (
                         <Check size={12} color={'#FFFFFF'} />
                       ) : (
                         <Plus size={12} color={'#0F0F0F'} />
@@ -117,7 +150,7 @@ export default function Index() {
 
             <View className="flex w-full items-center justify-center py-3">
               <TouchableHighlight
-                onPress={handlePersonalizeNext}
+                // onPress={handlePersonalizeNext}
                 className="flex w-full items-center justify-center rounded-full bg-primary p-3 shadow-sm">
                 <Text className="text-lg font-bold text-white">Next ({count})</Text>
               </TouchableHighlight>
