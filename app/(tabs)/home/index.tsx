@@ -187,7 +187,10 @@ export default function Index() {
         <View className="flex h-auto w-full flex-row items-center gap-5 py-3">
           <View className="flex h-12 w-[30%] flex-row items-center justify-start rounded-lg bg-accent px-3">
             <MapPin color="#63707C" size={20} />
-            <TextInput className="max-w-[90%] text-[#63707C]" placeholder="Location" />
+            <TextInput
+              className="max-w-[90%] text-[#63707C] placeholder:text-[#63707C]"
+              placeholder="Location"
+            />
           </View>
 
           <View className="flex h-full w-[30%] flex-col gap-2" style={{ zIndex: 1000 }}>

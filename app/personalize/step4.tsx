@@ -99,7 +99,7 @@ export default function Index() {
               </View>
               <Text className="text-base text-dark-gray">Enter a city, country or attraction</Text>
               <TextInput
-                className="h-14 rounded-lg bg-accent p-5 pl-5 text-foreground"
+                className="h-14 rounded-lg bg-accent p-5 pl-5 text-foreground placeholder:text-[#63707C]"
                 placeholder="Enter destination"
                 value={planData.destination_name}
                 onChangeText={(text) => setPlanData({ ...planData, destination_name: text })}
