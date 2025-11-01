@@ -7,6 +7,7 @@ import { Eye, EyeOff } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { SafeAreaView, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Toast } from 'toastify-react-native';
 import { cn } from 'utils';
 import { z } from 'zod';
@@ -26,6 +27,7 @@ const signupSchema = z
 type SignupForm = z.infer<typeof signupSchema>;
 
 export default function Index() {
+  const { top } = useSafeAreaInsets();
   const { register, isLoading, error, user, isAuthenticated } = useAuthStore();
 
   const signupForm = useForm<SignupForm>({
@@ -66,7 +68,7 @@ export default function Index() {
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   return (
-    <SafeAreaView className="bg-primary">
+    <SafeAreaView className="h-full w-full flex-1 bg-primary" style={{ paddingTop: top }}>
       <ScrollView className="h-full w-full" contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex min-h-max w-full flex-col gap-4">
           <View className="row gap-3 py-12">
