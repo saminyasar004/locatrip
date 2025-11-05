@@ -1,27 +1,18 @@
 import { Stack } from 'expo-router';
-import { StatusBar, useColorScheme } from 'react-native';
+import { StatusBar } from 'react-native';
+import ToastManager from 'toastify-react-native/components/ToastManager';
 
 export default function AuthLayout() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-
   return (
     <>
-      <StatusBar
-        translucent={true}
-        backgroundColor={isDark ? 'transparent' : '#000'}
-        barStyle="dark-content"
-      />
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+      <StatusBar backgroundColor="transparent" translucent={true} barStyle="light-content" />
       <Stack
         screenOptions={{
           headerShown: false,
-        }}
-      />
+        }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+      </Stack>
+      <ToastManager />
     </>
   );
 }

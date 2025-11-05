@@ -1,12 +1,13 @@
 import Onboarding3Img from 'assets/onboarding-doodle-3.svg';
 import { Link, useRouter } from 'expo-router';
-import { SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
+import { ScrollView, Text, TouchableHighlight, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
   const router = useRouter();
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="flex-1 bg-transparent">
       <ScrollView className="h-full w-full" contentContainerStyle={{ flexGrow: 1 }}>
         <View className="row">
           <View className="flex w-full items-end justify-end py-8">
