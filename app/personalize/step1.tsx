@@ -12,34 +12,18 @@ import {
   View,
 } from 'react-native';
 import { cn } from 'utils';
+import { Toast } from 'toastify-react-native';
+import axios from 'axios';
+import { baseURL } from 'config';
 
 export default function Index() {
   const router = useRouter();
   const { preferenceList, fetchAllPreferences, createPreference, isLoading, error } =
     usePersonalizeStore();
   const [count, setCount] = useState(0);
-  const [selectedPreferenceId, setSelectedPreferenceId] = useState<number[]>([]);
+  const [selectedPreferenceIds, setSelectedPreferenceIds] = useState<number[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-
-  // const [personalizeItems, setPersonalizeItems] = useState<PersonalizeItemProps[]>([
-  //   { id: 1, title: 'Hiking & Trekking', isChecked: false },
-  //   { id: 2, title: 'Art', isChecked: false },
-  //   { id: 3, title: 'Animals', isChecked: false },
-  //   { id: 4, title: 'Mountaineering', isChecked: false },
-  //   { id: 5, title: 'Solo Adventure', isChecked: false },
-  //   { id: 7, title: 'Local Festivals & Events', isChecked: false },
-  //   { id: 6, title: 'Food & Drink', isChecked: false },
-  //   { id: 8, title: 'Swimming', isChecked: false },
-  //   { id: 9, title: 'Sunset Cruises', isChecked: false },
-  //   { id: 10, title: 'Romantic Resorts', isChecked: false },
-  //   { id: 11, title: 'Luxury Hotels & Resorts', isChecked: false },
-  //   { id: 12, title: 'Historical Site Visits', isChecked: false },
-  //   { id: 13, title: 'Religious and Cultural Festivals', isChecked: false },
-  //   { id: 14, title: 'Organic Food Markets', isChecked: false },
-  //   { id: 15, title: 'Green Hotels', isChecked: false },
-  // ]);
-
-  // const [personalizeItems, setPersonalizeItems] = useState<PreferenceProps[]>([]);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     fetchAllPreferences();
@@ -52,25 +36,38 @@ export default function Index() {
   }, [fetchAllPreferences]);
 
   const addPreferenceToList = (item: PreferenceProps) => {
-    setSelectedPreferenceId((prevSelectedPreferenceId) => [...prevSelectedPreferenceId, item.id]);
+    setSelectedPreferenceIds((prevSelectedPreferenceId) => [...prevSelectedPreferenceId, item.id]);
     setCount((prevCount) => (item ? prevCount + 1 : prevCount - 1));
   };
 
   const removePreferenceFromList = (item: PreferenceProps) => {
-    setSelectedPreferenceId((prevSelectedPreferenceId) =>
+    setSelectedPreferenceIds((prevSelectedPreferenceId) =>
       prevSelectedPreferenceId.filter((id) => id !== item.id)
     );
     setCount((prevCount) => (item ? prevCount - 1 : prevCount + 1));
   };
 
-  const handleCreatePreference = async () => {
+  const handlePersonalizeNext = async () => {
+    setIsCreating(true);
     try {
-      await createPreference(selectedPreferenceId);
-      router.push('/personalize/step2');
-    } catch (error: any) {
-      console.log('Error occured while handling create preference form: ', error.message);
+      const response = await createPreference(selectedPreferenceIds);
+
+      if (response.status === 200) {
+        Toast.success(response.data?.message || 'Preferences created successfully!');
+        router.push('/personalize/step2');
+      } else {
+        Toast.error(
+          response.data?.message ||
+            response.data?.error ||
+            'Failed to create preferences. Please try again.'
+        );
+      }
+    } catch (err: any) {
+    } finally {
+      setIsCreating(false);
     }
   };
+
   if (isLoading)
     return (
       <View className="h-full w-full flex-1 items-center justify-center">
@@ -110,7 +107,7 @@ export default function Index() {
               {preferenceList.map((item, index) => (
                 <TouchableHighlight
                   onPress={() => {
-                    if (selectedPreferenceId.includes(item.id)) {
+                    if (selectedPreferenceIds.includes(item.id)) {
                       removePreferenceFromList(item);
                     } else {
                       addPreferenceToList(item);
@@ -119,7 +116,7 @@ export default function Index() {
                   key={index}
                   className={cn(
                     'flex items-center justify-center rounded-full border px-4 py-1 shadow-sm',
-                    selectedPreferenceId.includes(item.id)
+                    selectedPreferenceIds.includes(item.id)
                       ? 'border-primary bg-primary'
                       : 'border-dark-gray/40 bg-background'
                   )}
@@ -128,16 +125,16 @@ export default function Index() {
                     <Text
                       className={cn(
                         'text-lg font-medium',
-                        selectedPreferenceId.includes(item.id) ? 'text-white' : 'text-foreground'
+                        selectedPreferenceIds.includes(item.id) ? 'text-white' : 'text-foreground'
                       )}>
                       {item.name}
                     </Text>
                     <Text
                       className={cn(
                         'text-lg font-medium',
-                        selectedPreferenceId.includes(item.id) ? 'text-white' : 'text-foreground'
+                        selectedPreferenceIds.includes(item.id) ? 'text-white' : 'text-foreground'
                       )}>
-                      {selectedPreferenceId.includes(item.id) ? (
+                      {selectedPreferenceIds.includes(item.id) ? (
                         <Check size={12} color={'#FFFFFF'} />
                       ) : (
                         <Plus size={12} color={'#0F0F0F'} />
@@ -150,9 +147,11 @@ export default function Index() {
 
             <View className="flex w-full items-center justify-center py-3">
               <TouchableHighlight
-                // onPress={handlePersonalizeNext}
+                onPress={handlePersonalizeNext}
                 className="flex w-full items-center justify-center rounded-full bg-primary p-3 shadow-sm">
-                <Text className="text-lg font-bold text-white">Next ({count})</Text>
+                <Text className="text-lg font-bold text-white">
+                  {isCreating ? 'Creating...' : `Next (${count})`}
+                </Text>
               </TouchableHighlight>
             </View>
           </View>

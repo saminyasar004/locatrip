@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { Axios, AxiosResponse } from 'axios';
 import { baseURL } from 'config';
 import { create } from 'zustand';
 import useAuthStore from './authStore';
@@ -18,7 +18,7 @@ interface PersonalizeState {
   fetchAllPreferences: () => Promise<void>;
   isLoading: boolean;
   error: string | null;
-  createPreference: (preferenceId: number[]) => Promise<void>;
+  createPreference: (preferenceIds: number[]) => Promise<AxiosResponse<any>>;
 }
 
 const usePersonalizeStore = create<PersonalizeState>((set, get) => ({
@@ -54,41 +54,38 @@ const usePersonalizeStore = create<PersonalizeState>((set, get) => ({
     }
   },
 
-  createPreference: async (preferenceId: number[]) => {
+  createPreference: async (preferenceIds: number[]): Promise<AxiosResponse<any>> => {
     const accessToken = useAuthStore.getState().accessToken;
     set({ isLoading: true, error: null });
+
     try {
-      const prederData = { preferences: preferenceId };
-      console.log('FormData being sent:', prederData);
-      console.log('Access Token:', accessToken);
-      const response = await axios.post(
-        `${baseURL}/api/personalize/preferences/create/`,
-        prederData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const payload = { preferences: preferenceIds };
 
-      console.log('Preference response:', response.data);
+      const response = await axios.post(`${baseURL}/api/personalize/preferences/create/`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-      // Adjust this according to your backend's response structure
-      const { message, preference_name } = response.data;
-      console.log('Preference creation message:', message);
-      console.log('Preference names:', preference_name);
-      // Save token securely
+      const { preference_name } = response.data;
+
       set({
-        personalizeItemsNames: preference_name,
+        personalizeItemsNames: preference_name || [],
         isLoading: false,
         error: null,
       });
+
+      return response;
     } catch (error: any) {
+      console.error('Error creating preferences:', error.message);
       set({
-        error: error?.response?.data?.message || error.message || 'Login failed',
+        error: error?.response?.data?.message || error.message || 'Failed to create preferences',
         isLoading: false,
       });
+
+      // Return a rejected promise so callers can handle it
+      throw error;
     }
   },
 }));
