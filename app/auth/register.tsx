@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import useAuthStore from 'app/store/authStore';
+import useAuthStore from 'store/authStore';
 import AppleImg from 'assets/apple.svg';
 import GoogleImg from 'assets/google.svg';
 import { useRouter } from 'expo-router';

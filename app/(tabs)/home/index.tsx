@@ -1,4 +1,4 @@
-import useAuthStore from 'app/store/authStore';
+import useAuthStore from 'store/authStore';
 import Layout from 'components/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';

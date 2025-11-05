@@ -1,4 +1,4 @@
-import usePersonalizeStore, { PreferenceProps } from 'app/store/personalizeStore';
+import usePersonalizeStore, { PreferenceProps } from 'store/personalizeStore';
 import { useRouter } from 'expo-router';
 import { Check, Plus } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
