@@ -3,7 +3,7 @@ import 'nativewind';
 import { StatusBar, useColorScheme } from 'react-native';
 import { Host } from 'react-native-portalize';
 import ToastManager from 'toastify-react-native';
-import '../global.css';
+import './global.css';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
