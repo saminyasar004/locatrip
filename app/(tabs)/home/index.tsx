@@ -76,7 +76,7 @@ export default function Index() {
   return (
     <Layout>
       <View className="row flex h-auto min-h-full w-full flex-1 flex-col items-start">
-        <View className="flex h-auto w-full flex-row items-center justify-between gap-5 py-10">
+        <View className="flex h-auto w-full flex-row items-center justify-between gap-5 pb-10">
           <View className="h-auto flex-row items-center gap-4">
             {/* Avatar */}
             <View className="h-20 w-20 overflow-hidden rounded-full">

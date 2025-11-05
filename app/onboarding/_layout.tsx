@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { StatusBar, useColorScheme } from 'react-native';
+import ToastManager from 'toastify-react-native/components/ToastManager';
 
 export default function OnboardingLayout() {
   const colorScheme = useColorScheme();
@@ -7,21 +8,14 @@ export default function OnboardingLayout() {
 
   return (
     <>
-      <StatusBar
-        translucent={true}
-        backgroundColor={isDark ? 'transparent' : '#000'}
-        barStyle="dark-content"
-      />
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+      <StatusBar backgroundColor="transparent" translucent={true} barStyle="dark-content" />
       <Stack
         screenOptions={{
           headerShown: false,
-        }}
-      />
+        }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+      </Stack>
+      <ToastManager />
     </>
   );
 }

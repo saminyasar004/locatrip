@@ -1,8 +1,17 @@
 import { usePathname, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, useColorScheme } from 'react-native';
+import { ScrollView, StatusBar, useColorScheme, View, ViewStyle } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { cn } from 'utils';
 
-export default function Layout({ children }: { children?: React.ReactNode }) {
+export default function Layout({
+  children,
+  layoutStyle,
+}: {
+  children?: React.ReactNode;
+  layoutStyle?: string;
+}) {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const pathName = usePathname();
   const colorScheme = useColorScheme();
@@ -50,13 +59,26 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
 
   return (
     <>
-      <StatusBar translucent={true} backgroundColor={'#000'} barStyle="dark-content" hidden />
-      <SafeAreaView className="h-full w-full flex-1 bg-background">
+      <StatusBar backgroundColor="transparent" translucent={true} barStyle="dark-content" />
+      <SafeAreaView className={cn('h-full w-full flex-1 bg-background', layoutStyle)}>
         <ScrollView
           className="flex-1"
-          contentContainerStyle={{ paddingBottom: 20, paddingTop: 20 }}>
+          // contentContainerStyle={{ paddingBottom: 20, paddingTop: 20 }}>
+        >
           {children}
         </ScrollView>
+
+        {insets.bottom > 0 && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              height: insets.bottom,
+              width: '100%',
+              backgroundColor: 'white',
+            }}
+          />
+        )}
       </SafeAreaView>
     </>
   );

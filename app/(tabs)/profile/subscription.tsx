@@ -149,7 +149,7 @@ export default function Index() {
   return (
     <Layout>
       <View className="row flex h-auto min-h-full w-full flex-1 flex-col items-start">
-        <View className="flex w-full flex-row items-center gap-3 bg-white pt-8">
+        <View className="flex w-full flex-row items-center gap-3 bg-white">
           <TouchableHighlight onPress={() => router.back()} underlayColor={'transparent'}>
             <ArrowLeft size={24} color={'#63707C'} />
           </TouchableHighlight>
