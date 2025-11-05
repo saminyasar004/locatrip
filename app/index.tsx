@@ -1,9 +1,10 @@
 import SVGImg from 'assets/adaptive-icon.svg';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { View } from 'react-native';
 import useAuthStore from '../store/authStore';
 import useProfileStore from '../store/profileStore';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function App() {
   const { user, isAuthenticated, clearError, accessToken, isLoading, fetchProfile } =
@@ -49,7 +50,7 @@ export default function App() {
   }, [isAuthenticated, user, isLoading]);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="flex-1 bg-transparent">
       <View className="row table h-screen items-center justify-center">
         <SVGImg width={200} height={200} />
       </View>
