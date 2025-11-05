@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import useAuthStore from 'app/store/authStore';
-import useProfileStore from 'app/store/profileStore';
+import useAuthStore from 'store/authStore';
+import useProfileStore from 'store/profileStore';
 import AppleImg from 'assets/apple.svg';
 import GoogleImg from 'assets/google.svg';
 import { useRouter } from 'expo-router';

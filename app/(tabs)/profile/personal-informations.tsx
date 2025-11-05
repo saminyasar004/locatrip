@@ -1,4 +1,4 @@
-import useProfileStore from 'app/store/profileStore';
+import useProfileStore from 'store/profileStore';
 import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Search, SquarePen, Star } from 'lucide-react-native';
