@@ -1,4 +1,3 @@
-import { QueryClient } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import 'nativewind';
 import { StatusBar, useColorScheme } from 'react-native';
