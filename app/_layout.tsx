@@ -6,20 +6,19 @@ import ToastManager from 'toastify-react-native';
 import './global.css';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
   return (
-    <Host>
-      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
-
+    <>
       <Stack
         screenOptions={{
           headerShown: false,
         }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="auth" options={{ headerShown: false }} />
+        <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+        <Stack.Screen name="personalize" options={{ headerShown: false }} />
         <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>
       <ToastManager />
-    </Host>
+    </>
   );
 }
