@@ -2,11 +2,11 @@ import axios from 'axios';
 import { baseURL } from 'config';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { SafeAreaView, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Index() {
-  const { top } = useSafeAreaInsets();
+  const insets = useSafeAreaInsets();
   const router = useRouter();
 
   const [email, setEmail] = useState<string>('');
@@ -40,7 +40,7 @@ export default function Index() {
   }
 
   return (
-    <SafeAreaView className="h-full w-full flex-1 bg-primary" style={{ paddingTop: top }}>
+    <SafeAreaView className="h-full w-full flex-1 bg-primary">
       <ScrollView className="h-full w-full" contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex min-h-max w-full flex-col gap-4">
           <View className="row gap-3 py-12">
@@ -81,6 +81,18 @@ export default function Index() {
           </View>
         </View>
       </ScrollView>
+
+      {insets.bottom > 0 && (
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            height: insets.bottom,
+            width: '100%',
+            backgroundColor: 'white',
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }

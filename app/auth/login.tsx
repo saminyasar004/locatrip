@@ -7,9 +7,9 @@ import { useRouter } from 'expo-router';
 import { Eye, EyeOff } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { SafeAreaView, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Toast } from 'toastify-react-native';
 import { z } from 'zod';
 
@@ -21,7 +21,7 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Index() {
-  const { top } = useSafeAreaInsets();
+  const insets = useSafeAreaInsets();
   const { login, user, isLoading, error } = useAuthStore();
   const { init } = useProfileStore();
 
@@ -59,7 +59,7 @@ export default function Index() {
   }, [user]);
 
   return (
-    <SafeAreaView className="h-full w-full flex-1 bg-primary" style={{ paddingTop: top }}>
+    <SafeAreaView className="h-full w-full flex-1 bg-primary">
       <ScrollView className="h-full w-full" contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex min-h-max w-full flex-col gap-4">
           <View className="row gap-3 py-12">
@@ -191,6 +191,18 @@ export default function Index() {
           </View>
         </View>
       </ScrollView>
+
+      {insets.bottom > 0 && (
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            height: insets.bottom,
+            width: '100%',
+            backgroundColor: 'white',
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }
