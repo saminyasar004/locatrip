@@ -2,6 +2,7 @@ import useAuthStore from 'store/authStore';
 import Layout from 'components/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { parseISO, format } from 'date-fns';
 import {
   Bell,
   Calendar,
@@ -18,9 +19,20 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { cn } from 'utils';
+import useUserItineraryStore, { ItineraryProps } from 'store/userItineraryStore';
 
 export default function Index() {
   const { isAuthenticated, isLoading, user, accessToken, error } = useAuthStore();
+  const {
+    isLoading: isLoadingItinerary,
+    itineraryList,
+    fetchActiveItineraries,
+    error: errorItinerary,
+  } = useUserItineraryStore();
+
+  useEffect(() => {
+    fetchActiveItineraries();
+  }, []);
 
   const router = useRouter();
 
@@ -102,44 +114,11 @@ export default function Index() {
         </View>
 
         {/* Plan card */}
-        <View className="h-44 w-full rounded-lg">
-          <LinearGradient
-            colors={['#F3592F', '#F35336', '#EF4740']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={{ borderRadius: 10 }}
-            className="h-full w-full rounded-lg">
-            <View className="flex w-full flex-row items-center justify-between gap-3 p-3 pb-0">
-              <View className="flex flex-col gap-2">
-                <Text className="text-lg font-semibold text-white">Costa Rica</Text>
-                <View className="flex w-full flex-row items-center gap-3">
-                  <View className="flex flex-row items-center gap-2">
-                    <Calendar size={16} color={'#ffffff'} />
-                    <Text className="text-white">Nov 1 - Nov 5, 2025</Text>
-                  </View>
 
-                  <View className="flex flex-row items-center gap-2">
-                    <Clock size={16} color={'#ffffff'} />
-                    <Text className="text-white">5 Days</Text>
-                  </View>
-                </View>
-              </View>
-
-              <View className="h-8 rounded-full bg-white p-2 px-4">
-                <Text className="text-xs font-medium text-primary">2 Days Left</Text>
-              </View>
-            </View>
-
-            <View className="flex flex-col items-center gap-2 px-3 py-8">
-              <View className="flex w-full flex-row items-center justify-between">
-                <Text className="text-base text-white">Trip Planning Progress</Text>
-                <Text className="text-lg font-medium text-white">75% Complete</Text>
-              </View>
-              <View className="flex h-3 w-full items-start rounded-full bg-[#F46F65]">
-                <View className="h-full w-[60%] rounded-full bg-white"></View>
-              </View>
-            </View>
-          </LinearGradient>
+        <View className="flex w-full flex-col gap-3">
+          {itineraryList.map((itinerary) => (
+            <ActiveItineraryCard key={itinerary.id} itinerary={itinerary} />
+          ))}
         </View>
 
         <View className="flex w-full flex-row items-center justify-between py-8">
@@ -480,5 +459,72 @@ export default function Index() {
         </View>
       </View>
     </Layout>
+  );
+}
+
+function ActiveItineraryCard({ itinerary }: { itinerary: ItineraryProps }) {
+  const formattedStartDate = format(parseISO(itinerary.start_date), 'MMM dd');
+  const formattedEndDate = format(parseISO(itinerary.end_date), 'MMM dd yyyy');
+
+  return (
+    <View className="h-44 w-full rounded-lg">
+      <LinearGradient
+        colors={['#F3592F', '#F35336', '#EF4740']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{ borderRadius: 10 }}
+        className="h-full w-full rounded-lg">
+        <View className="flex w-full flex-row items-start justify-between gap-3 p-3 pb-0">
+          {/* LEFT CONTENT */}
+          <View className="flex-1 flex-col gap-2">
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className="flex-shrink text-lg font-semibold text-white">
+              {itinerary.destination_name}
+            </Text>
+
+            <View className="flex w-full flex-row flex-wrap items-center gap-3">
+              <View className="flex flex-row items-center gap-2">
+                <Calendar size={16} color={'#ffffff'} />
+                <Text className="text-white">
+                  {formattedStartDate} - {formattedEndDate}
+                </Text>
+              </View>
+
+              <View className="flex flex-row items-center gap-2">
+                <Clock size={16} color={'#ffffff'} />
+                <Text className="text-white">{itinerary.duration} Days</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* RIGHT BADGE (no shrink) */}
+          <View className="flex-shrink-0 self-start rounded-full bg-white px-4 py-1">
+            <Text className="text-center text-xs font-medium text-primary">
+              {itinerary.days_left}
+            </Text>
+          </View>
+        </View>
+
+        {/* PROGRESS SECTION */}
+        <View className="flex flex-col items-center gap-2 px-3 py-8">
+          <View className="flex w-full flex-row items-center justify-between">
+            <Text className="text-base text-white">Trip Planning Progress</Text>
+            <Text className="text-lg font-medium text-white">
+              {itinerary.planning_progress}% Complete
+            </Text>
+          </View>
+          <View className="flex h-3 w-full items-start rounded-full bg-[#F46F65]">
+            <View
+              style={{
+                width: `${itinerary.planning_progress}%`,
+              }}
+              className="h-full rounded-full bg-white"
+            />
+          </View>
+        </View>
+      </LinearGradient>
+    </View>
   );
 }

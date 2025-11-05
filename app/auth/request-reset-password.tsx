@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Toast } from 'toastify-react-native';
 
 export default function Index() {
   const insets = useSafeAreaInsets();
@@ -18,7 +19,7 @@ export default function Index() {
 
     try {
       const response = await axios.post(
-        `${baseURL}/api/support/submit/`,
+        `${baseURL}/api/password-reset/send-otp/`,
         {
           email: email,
         },
@@ -29,8 +30,22 @@ export default function Index() {
           },
         }
       );
-      setEmail('');
-      router.push('/auth/verify-otp');
+      if (response.status === 200) {
+        setEmail('');
+        Toast.success(response.data?.message || 'Successfully sent reset link!');
+        return router.push({
+          pathname: '/auth/verify-otp',
+          params: {
+            email: email,
+          },
+        });
+      }
+
+      Toast.error(
+        response.data?.message ||
+          response.data?.error ||
+          'Failed to send reset link. Please try again.'
+      );
     } catch (error) {
       console.error('Request reset password error:', error);
       setError('Failed to send reset link. Please try again.');

@@ -6,6 +6,8 @@ import { ArrowLeft } from 'lucide-react-native';
 import { useState } from 'react';
 import { Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { Toast } from 'toastify-react-native';
+import useAuthStore from 'store/authStore';
 
 type Payload = {
   user_manual_email: string;
@@ -14,6 +16,8 @@ type Payload = {
 
 export default function Index() {
   const router = useRouter();
+
+  const { accessToken } = useAuthStore();
 
   const [payload, setPayload] = useState<Payload>({
     user_manual_email: '',
@@ -30,12 +34,14 @@ export default function Index() {
         headers: {
           'Content-Type': 'application/json',
 
-          Authorization: `Bearer ${await (async () => {
-            const token = await SecureStore.getItemAsync('access_token');
-            return token;
-          })()}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
+
+      if (response.status === 201) {
+        Toast.success(response.data?.message || 'Successfully submitted!');
+        router.push('/profile/');
+      }
 
       setPayload({
         user_manual_email: '',
