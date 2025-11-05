@@ -18,6 +18,7 @@ export default function App() {
       try {
         await fetchProfile();
         console.log('Profile fetched successfully on app load.');
+        console.log({ isAuthenticated, user, accessToken, from: 'useEffect' });
       } catch (error) {
         console.log('Error fetching profile on app load:', error);
       }
@@ -29,6 +30,11 @@ export default function App() {
     if (isLoading) return;
 
     setTimeout(() => {
+      console.log({
+        isAuthenticated,
+        user,
+        accessToken,
+      });
       if (isAuthenticated && user && accessToken) {
         init({
           full_name: user.full_name,
@@ -37,7 +43,7 @@ export default function App() {
         });
         router.replace('/(tabs)/home');
       } else {
-        router.replace('/auth/login');
+        router.replace('/onboarding');
       }
     }, 300);
   }, [isAuthenticated, user, isLoading]);
