@@ -12,7 +12,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-asset"
+      "expo-asset",
+      "expo-web-browser"
     ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -41,6 +42,12 @@
       },
       "package": "com.saminyasar004.locatrip",
       "edgeToEdgeEnabled": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ddcc2120-df98-47f1-aaa7-25e86a95394e"
+      }
     }
   }
 }

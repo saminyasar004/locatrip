@@ -27,6 +27,7 @@ export default function Index() {
               <Text className="text-lg font-semibold text-white">Yes</Text>
             </TouchableHighlight>
             <TouchableHighlight
+              onPress={() => router.push('/home')}
               className="flex flex-1 items-center justify-center rounded-full border-2 border-primary bg-background p-3 shadow-sm"
               underlayColor="transparent">
               <Text className="text-lg font-semibold text-primary">No</Text>

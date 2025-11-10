@@ -28,6 +28,7 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   login: (userData: LoginPayload) => Promise<void>;
+  googleLogin: (email: string, full_name: string) => Promise<void>;
   register: (userData: RegisterPayload) => Promise<void>;
   fetchProfile: () => Promise<void>;
   logout: () => void;
@@ -51,21 +52,32 @@ const useAuthStore = create<AuthState>((set, get) => ({
       const response = await axios.post(`${baseURL}/api/login/`, userData, {
         headers: { 'Content-Type': 'application/json' },
       });
-      const { access, user } = response.data;
-      console.log('Login response:', response.data);
-      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, access);
+      if (response.status === 200) {
+        const { access, user } = response.data;
+        console.log('Login response:', response.data);
+        await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, access);
 
-      set({
-        user,
-        accessToken: access,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      });
+        set({
+          user,
+          accessToken: access,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        });
+      } else {
+        set({
+          error: response.data?.detail || response.data?.error || 'Invalid email or password',
+          isLoading: false,
+        });
+      }
     } catch (error: any) {
       console.log('Login error:', error?.response?.data || error.message);
       set({
-        error: error?.response?.data?.message || error.message || 'Login failed',
+        error:
+          error?.response.data?.detail ||
+          error?.response?.data?.message ||
+          error.message ||
+          'Login failed',
         isLoading: false,
       });
     }
@@ -137,6 +149,33 @@ const useAuthStore = create<AuthState>((set, get) => ({
   logout: () => {
     SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
     set({ user: null, accessToken: null, isAuthenticated: false, error: null });
+  },
+
+  googleLogin: async (email: string, full_name: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.post(`${baseURL}/api/social-login/`, {
+        email,
+        full_name,
+        auth_provider: 'google',
+      });
+
+      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, response.data?.token.access);
+
+      set({
+        user: response.data?.user_details,
+        accessToken: response.data?.token.access,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+      });
+    } catch (error: any) {
+      console.log('Google login error:', error?.response?.data || error.message);
+      set({
+        error: error?.response?.data?.message || error.message || 'Google login failed',
+        isLoading: false,
+      });
+    }
   },
 
   // Clear error

@@ -103,7 +103,7 @@ export default function Index() {
               </View>
 
               <TouchableHighlight
-                onPress={() => router.push('/personalize/step4')}
+                onPress={() => router.push('/profile/my-trip')}
                 underlayColor={'transparent'}>
                 <ChevronRight size={25} color={'#F86241'} />
               </TouchableHighlight>
@@ -145,7 +145,7 @@ export default function Index() {
               </View>
 
               <TouchableHighlight
-                onPress={() => router.push('/my-plan/reviews')}
+                onPress={() => router.push('/profile/event')}
                 underlayColor={'transparent'}>
                 <ChevronRight size={25} color={'#F86241'} />
               </TouchableHighlight>
