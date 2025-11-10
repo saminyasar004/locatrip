@@ -12,6 +12,7 @@ import {
   Clock,
   Heart,
   MapPin,
+  Plus,
   Share2Icon,
   Star,
 } from 'lucide-react-native';
@@ -115,11 +116,29 @@ export default function Index() {
 
         {/* Plan card */}
 
-        <View className="flex w-full flex-col gap-3">
-          {itineraryList.map((itinerary) => (
-            <ActiveItineraryCard key={itinerary.id} itinerary={itinerary} />
-          ))}
-        </View>
+        {itineraryList.length > 0 && (
+          <View className="flex w-full flex-col gap-3">
+            {itineraryList.map((itinerary) => (
+              <ActiveItineraryCard key={itinerary.id} itinerary={itinerary} />
+            ))}
+          </View>
+        )}
+        {itineraryList.length === 0 && (
+          <View className="flex w-full items-center justify-center">
+            <TouchableHighlight
+              onPress={() => router.push('/personalize/step4')}
+              className="flex w-full items-center justify-center rounded-full border-2 border-primary bg-background px-4 py-4 shadow-sm"
+              underlayColor="transparent">
+              <View className="flex flex-row items-center gap-2">
+                <Plus size={20} color={'#F86241'} />
+
+                <Text className="flex items-center text-lg font-bold text-primary">
+                  Create Itinerary
+                </Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        )}
 
         <View className="flex w-full flex-row items-center justify-between py-8">
           <Text className="text-xl font-semibold text-foreground">Your Itinerary</Text>
