@@ -12,6 +12,10 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Toast } from 'toastify-react-native';
 import { z } from 'zod';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email'),
@@ -22,11 +26,48 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Index() {
   const insets = useSafeAreaInsets();
-  const { login, user, isLoading, error } = useAuthStore();
+  const { login, googleLogin, user, isLoading, error } = useAuthStore();
   const { init } = useProfileStore();
 
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  // ✅ Google OAuth setup
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    iosClientId: 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com',
+    androidClientId: 'YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com',
+    webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+  });
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+      fetchGoogleUserInfo(authentication?.accessToken);
+    }
+  }, [response]);
+
+  // ✅ fetch user info from Google API
+  const fetchGoogleUserInfo = async (token: string | undefined) => {
+    if (!token) return;
+    try {
+      const res = await fetch('https://www.googleapis.com/userinfo/v2/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const user = await res.json();
+      console.log('Google user info:', user);
+
+      // Call your backend via Zustand
+      await googleLogin(user.email, user.name);
+
+      if (!useAuthStore.getState().error) {
+        Toast.success('Login successful via Google!');
+        router.replace('/home');
+      }
+    } catch (err) {
+      console.log('Google auth failed:', err);
+      Toast.error('Failed to sign in with Google.');
+    }
+  };
 
   const loginForm = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -170,9 +211,13 @@ export default function Index() {
               </View>
 
               <View className="flex w-full flex-row items-center justify-center gap-7 py-5">
-                <View className="flex h-16 w-16 items-center justify-center rounded-lg border border-dark-gray/30">
+                <TouchableHighlight
+                  onPress={() => promptAsync()}
+                  underlayColor="transparent"
+                  disabled={!request || isLoading}
+                  className="flex h-16 w-16 items-center justify-center rounded-lg border border-dark-gray/30">
                   <GoogleImg className="h-10 w-10" />
-                </View>
+                </TouchableHighlight>
 
                 <View className="flex h-16 w-16 items-center justify-center rounded-lg border border-dark-gray/30">
                   <AppleImg className="h-10 w-10" />
