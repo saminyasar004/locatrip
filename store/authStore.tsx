@@ -52,21 +52,32 @@ const useAuthStore = create<AuthState>((set, get) => ({
       const response = await axios.post(`${baseURL}/api/login/`, userData, {
         headers: { 'Content-Type': 'application/json' },
       });
-      const { access, user } = response.data;
-      console.log('Login response:', response.data);
-      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, access);
+      if (response.status === 200) {
+        const { access, user } = response.data;
+        console.log('Login response:', response.data);
+        await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, access);
 
-      set({
-        user,
-        accessToken: access,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      });
+        set({
+          user,
+          accessToken: access,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        });
+      } else {
+        set({
+          error: response.data?.detail || response.data?.error || 'Invalid email or password',
+          isLoading: false,
+        });
+      }
     } catch (error: any) {
       console.log('Login error:', error?.response?.data || error.message);
       set({
-        error: error?.response?.data?.message || error.message || 'Login failed',
+        error:
+          error?.response.data?.detail ||
+          error?.response?.data?.message ||
+          error.message ||
+          'Login failed',
         isLoading: false,
       });
     }
