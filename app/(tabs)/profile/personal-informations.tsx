@@ -78,7 +78,7 @@ export default function Index() {
             <TouchableHighlight
               onPress={updatePersonalInfo}
               className="flex w-full items-center justify-center rounded-full bg-primary p-3 shadow-sm">
-              <Text className="text-lg font-bold text-white">Edit Details</Text>
+              <Text className="text-lg font-bold text-white">Save</Text>
             </TouchableHighlight>
           </View>
         </View>
