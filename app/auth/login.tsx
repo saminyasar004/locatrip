@@ -78,9 +78,12 @@ export default function Index() {
     try {
       await login(formData);
 
-      if (!useAuthStore.getState().error) {
+      if (!error) {
         router.replace('/home');
         Toast.success('Successfully logged in!');
+      } else {
+        Toast.error(error || 'Login failed');
+        throw new Error(error);
       }
     } catch (err: any) {
       console.log('Error occured while handling login form: ', err.message);
