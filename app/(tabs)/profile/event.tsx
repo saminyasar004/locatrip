@@ -1,15 +1,14 @@
 import Layout from 'components/layout';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import {
   ArrowLeft,
   Calendar,
   ChevronDown,
-  ChevronRight,
   ChevronUp,
-  Clock,
+  Heart,
   MapPin,
   Plus,
+  Share2Icon,
 } from 'lucide-react-native';
 import { useState } from 'react';
 import { Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
@@ -81,7 +80,7 @@ export default function Index() {
         </View>
 
         {selectedTab === 'event-for-you' && <EventForYouTab />}
-        {/* {selectedTab === 'my-event' && <MyEventTab />} */}
+        {selectedTab === 'my-event' && <MyEventTab />}
       </View>
     </Layout>
   );
@@ -188,6 +187,126 @@ function EventForYouTab() {
             closeOnBackPressed={true}
           />
         </View>
+      </View>
+
+      <View className="flex h-auto w-full flex-col gap-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <TouchableHighlight
+            key={index}
+            // key={index}
+            // onPress={() => router.push('/local-recommend/card-details')}
+            underlayColor={'transparent'}
+            className="mt-5 h-auto w-full rounded-lg bg-white shadow-md">
+            <View className="flex w-full flex-col gap-3 rounded-lg bg-white pb-5">
+              <View className="relative flex h-44 items-center justify-center">
+                <Image
+                  source={require(`assets/event-1.jpg`)}
+                  className="h-full w-full rounded-lg"
+                />
+                <TouchableHighlight className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                  <Heart size={16} color={'#F86241'} />
+                </TouchableHighlight>
+
+                <TouchableHighlight className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                  <Share2Icon size={16} color={'#F86241'} />
+                </TouchableHighlight>
+              </View>
+              <View className="flex flex-col gap-3 bg-white px-6">
+                <Text className="text-lg font-semibold">Summer Music Festival</Text>
+                <Text className="text-sm font-normal">
+                  Join us for an amazing outdoor music festival featuring local and international
+                  artists.
+                </Text>
+                <View className="flex w-full flex-col gap-3">
+                  <View className="flex w-full flex-1 flex-row items-center gap-3">
+                    <Calendar size={16} color={'#63707C'} />
+                    <Text className="text-sm font-medium text-[#63707C]">15/08/2024 at 18:00</Text>
+                  </View>
+
+                  <View className="flex w-full flex-1 flex-row items-center gap-3">
+                    <MapPin size={16} color={'#63707C'} />
+                    <Text className="text-sm font-medium text-[#63707C]">
+                      Central Park, Costa Rica
+                    </Text>
+                  </View>
+                </View>
+
+                <TouchableHighlight
+                  className="mt-5 flex w-full items-center justify-center rounded-full border-2 border-primary bg-primary px-4 py-3 shadow-sm"
+                  underlayColor="transparent">
+                  <View className="flex flex-row items-center gap-2">
+                    <Text className="flex items-center text-lg font-bold text-white">
+                      View Details
+                    </Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            </View>
+          </TouchableHighlight>
+        ))}
+      </View>
+    </>
+  );
+}
+
+function MyEventTab() {
+  return (
+    <>
+      <View className="flex h-auto w-full flex-col gap-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <TouchableHighlight
+            key={index}
+            // key={index}
+            // onPress={() => router.push('/local-recommend/card-details')}
+            underlayColor={'transparent'}
+            className="mt-5 h-auto w-full rounded-lg bg-white shadow-md">
+            <View className="flex w-full flex-col gap-3 rounded-lg bg-white pb-5">
+              <View className="relative flex h-44 items-center justify-center">
+                <Image
+                  source={require(`assets/event-1.jpg`)}
+                  className="h-full w-full rounded-lg"
+                />
+                <TouchableHighlight className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                  <Heart size={16} color={'#F86241'} />
+                </TouchableHighlight>
+
+                <TouchableHighlight className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                  <Share2Icon size={16} color={'#F86241'} />
+                </TouchableHighlight>
+              </View>
+              <View className="flex flex-col gap-3 bg-white px-6">
+                <Text className="text-lg font-semibold">Summer Music Festival</Text>
+                <Text className="text-sm font-normal">
+                  Join us for an amazing outdoor music festival featuring local and international
+                  artists.
+                </Text>
+                <View className="flex w-full flex-col gap-3">
+                  <View className="flex w-full flex-1 flex-row items-center gap-3">
+                    <Calendar size={16} color={'#63707C'} />
+                    <Text className="text-sm font-medium text-[#63707C]">15/08/2024 at 18:00</Text>
+                  </View>
+
+                  <View className="flex w-full flex-1 flex-row items-center gap-3">
+                    <MapPin size={16} color={'#63707C'} />
+                    <Text className="text-sm font-medium text-[#63707C]">
+                      Central Park, Costa Rica
+                    </Text>
+                  </View>
+                </View>
+
+                <TouchableHighlight
+                  className="mt-5 flex w-full items-center justify-center rounded-full border-2 border-primary bg-primary px-4 py-3 shadow-sm"
+                  underlayColor="transparent">
+                  <View className="flex flex-row items-center gap-2">
+                    <Text className="flex items-center text-lg font-bold text-white">
+                      View Details
+                    </Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            </View>
+          </TouchableHighlight>
+        ))}
       </View>
     </>
   );
