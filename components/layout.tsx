@@ -60,7 +60,7 @@ export default function Layout({
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} barStyle="dark-content" />
-      <SafeAreaView className={cn('h-full w-full flex-1 bg-background', layoutStyle)}>
+      <SafeAreaView className={cn('h-full w-full flex-1 bg-[#FBFEFE]', layoutStyle)}>
         <ScrollView
           className="flex-1"
           // contentContainerStyle={{ paddingBottom: 20, paddingTop: 20 }}>
