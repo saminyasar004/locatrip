@@ -1,6 +1,6 @@
 import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, MapPin, Search, Star, Users } from 'lucide-react-native';
+import { ArrowLeft, Search, Star } from 'lucide-react-native';
 import { Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
 
 export default function Index() {

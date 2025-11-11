@@ -1,5 +1,3 @@
-import useAuthStore from 'store/authStore';
-import useProfileStore from 'store/profileStore';
 import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
 import {
@@ -15,7 +13,9 @@ import {
   Wallet,
 } from 'lucide-react-native';
 import { useEffect } from 'react';
-import { Image, SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableHighlight, View } from 'react-native';
+import useAuthStore from 'store/authStore';
+import useProfileStore from 'store/profileStore';
 
 export default function Index() {
   const router = useRouter();

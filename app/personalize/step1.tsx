@@ -1,4 +1,3 @@
-import usePersonalizeStore, { PreferenceProps } from 'store/personalizeStore';
 import { useRouter } from 'expo-router';
 import { Check, Plus } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
@@ -11,10 +10,9 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
-import { cn } from 'utils';
+import usePersonalizeStore, { PreferenceProps } from 'store/personalizeStore';
 import { Toast } from 'toastify-react-native';
-import axios from 'axios';
-import { baseURL } from 'config';
+import { cn } from 'utils';
 
 export default function Index() {
   const router = useRouter();

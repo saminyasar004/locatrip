@@ -1,8 +1,7 @@
-import useAuthStore from 'store/authStore';
 import Layout from 'components/layout';
+import { format, parseISO } from 'date-fns';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { parseISO, format } from 'date-fns';
 import {
   Bell,
   Calendar,
@@ -19,8 +18,9 @@ import {
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { cn } from 'utils';
+import useAuthStore from 'store/authStore';
 import useUserItineraryStore, { ItineraryProps } from 'store/userItineraryStore';
+import { cn } from 'utils';
 
 export default function Index() {
   const { isAuthenticated, isLoading, user, accessToken, error } = useAuthStore();

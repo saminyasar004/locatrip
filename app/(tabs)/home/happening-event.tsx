@@ -2,15 +2,10 @@ import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
 import {
   ArrowLeft,
-  Bell,
-  Calendar,
   ChevronDown,
-  ChevronRight,
   ChevronUp,
-  Clock,
   Heart,
   MapPin,
-  MoveLeft,
   Share2Icon,
   Star,
 } from 'lucide-react-native';
