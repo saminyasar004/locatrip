@@ -1,11 +1,8 @@
 import { Stack } from 'expo-router';
-import { StatusBar, useColorScheme } from 'react-native';
+import { StatusBar } from 'react-native';
 import ToastManager from 'toastify-react-native/components/ToastManager';
 
 export default function OnboardingLayout() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} barStyle="dark-content" />
