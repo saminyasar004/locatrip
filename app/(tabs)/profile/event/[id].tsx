@@ -22,7 +22,7 @@ export default function Index() {
     <Layout>
       <ScrollView
         className="flex-1 bg-white"
-        contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 20 }}>
+        contentContainerStyle={{ paddingBottom: 0, paddingHorizontal: 20 }}>
         {/* Header */}
         <View className="flex w-full flex-row items-center gap-3 py-3">
           <TouchableHighlight onPress={() => router.back()} underlayColor={'transparent'}>
