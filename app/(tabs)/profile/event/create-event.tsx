@@ -1,10 +1,11 @@
 import DateInput from '@/components/ui/date-input';
 import DropDown from '@/components/ui/dropdown';
+import TimeInput from '@/components/ui/time-input';
 import Layout from 'components/layout';
 import { Textarea } from 'components/ui/textarea';
 import * as DocumentPicker from 'expo-document-picker';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, CloudUpload } from 'lucide-react-native';
+import { ArrowLeft, CloudUpload, X } from 'lucide-react-native';
 import { useState } from 'react';
 import {
   Image,
@@ -20,19 +21,8 @@ export default function CreateEventScreen() {
   const router = useRouter();
 
   const [eventImageFile, setEventImageFile] = useState<any>(null);
-  const [isCategoryDropDownOpen, setIsCategoryDropDownOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
-  const [categoryType, setCategoryType] = useState([
-    { label: 'Music', value: 'MUSIC' },
-    { label: 'Technology', value: 'TECHNOLOGY' },
-    { label: 'Food & Drink', value: 'FOOD-&-DRINK' },
-    { label: 'Outdoor', value: 'OUTDOOR' },
-    { label: 'Sports', value: 'SPORTS' },
-    { label: 'Art & Culture', value: 'ART-&-CULTURE' },
-    { label: 'Education', value: 'EDUCATION' },
-    { label: 'Health & Wellness', value: 'HEALTH-&-WELLNESS' },
-  ]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tag, setTag] = useState<string>('');
 
   const handleFilePick = async () => {
     try {
@@ -154,7 +144,7 @@ export default function CreateEventScreen() {
         </View>
 
         <View className="mt-6">
-          <Text className="text-lg font-medium text-[#313131]">Date & Time</Text>
+          <Text className="mb-5 text-lg font-medium text-[#313131]">Date & Time</Text>
 
           <DateInput
             label="Event Date"
@@ -176,10 +166,107 @@ export default function CreateEventScreen() {
         </View>
 
         <View className="flex w-full flex-row items-center justify-between pt-6">
-          <View className="flex flex-col gap-3">
-            <Text className="text-base font-medium text-foreground">Start</Text>
+          <View className="flex w-[48%] flex-col gap-3">
+            <TimeInput label="Start" placeholder="Start" value={null} />
+          </View>
+
+          <View className="flex w-[48%] flex-col gap-3">
+            <TimeInput label="End" placeholder="End" value={null} />
           </View>
         </View>
+
+        <View className="mt-5">
+          <Text className="mb-5 text-lg font-medium text-[#313131]">Locations</Text>
+          <Text className="text-base font-medium text-foreground">Venue Name</Text>
+          <TextInput
+            className="mt-1 h-14 rounded-lg bg-[#FFF4F2] px-5 text-foreground placeholder:text-[#63707C]"
+            placeholder="Enter venue name"
+          />
+        </View>
+
+        <View className="mt-5">
+          <Text className="text-base font-medium text-foreground">Address</Text>
+          <TextInput
+            className="mt-1 h-14 rounded-lg bg-[#FFF4F2] px-5 text-foreground placeholder:text-[#63707C]"
+            placeholder="Enter address"
+          />
+        </View>
+
+        <View className="flex w-full flex-1 flex-row items-end justify-between gap-3 py-5">
+          <View className="flex flex-1 flex-col gap-3">
+            <Text className="text-base font-medium text-foreground">Tags</Text>
+            <TextInput
+              className="mt-1 h-14 rounded-lg bg-[#FFF4F2] px-5 text-foreground placeholder:text-[#63707C]"
+              placeholder="Add tags"
+              value={tag}
+              onChangeText={(text) => setTag(text)}
+            />
+          </View>
+          <Pressable
+            onPress={() => {
+              setTags([...tags, tag]);
+              setTag('');
+            }}
+            className="flex items-center justify-center rounded-full bg-primary px-6 py-2">
+            <Text className="text-base font-semibold text-white">Add</Text>
+          </Pressable>
+        </View>
+
+        <View className="flex w-full flex-1 flex-row gap-2">
+          {tags.map((tag, index) => (
+            <View
+              key={index}
+              className="relative flex items-center justify-center rounded-full bg-primary/40 px-8 py-3">
+              <Text>{tag}</Text>
+              <Pressable
+                onPress={() => {
+                  setTags(tags.filter((t, c) => t !== tag && c !== index));
+                }}
+                className="absolute -right-2 -top-2 rounded-full bg-primary p-1">
+                <X size={16} color={'#FFF4F2'} />
+              </Pressable>
+            </View>
+          ))}
+        </View>
+
+        <View className="mt-5">
+          <Text className="mb-5 text-lg font-medium text-[#313131]">Organizer Details</Text>
+          <Text className="text-base font-medium text-foreground">Organizer Name</Text>
+          <TextInput
+            className="mt-1 h-14 rounded-lg bg-[#FFF4F2] px-5 text-foreground placeholder:text-[#63707C]"
+            placeholder="Enter name"
+          />
+        </View>
+
+        <View className="mt-5">
+          <Text className="text-base font-medium text-foreground">Email Address</Text>
+          <TextInput
+            className="mt-1 h-14 rounded-lg bg-[#FFF4F2] px-5 text-foreground placeholder:text-[#63707C]"
+            placeholder="Enter email address"
+          />
+        </View>
+
+        <View className="mt-5">
+          <Text className="text-base font-medium text-foreground">Phone Number</Text>
+          <TextInput
+            className="mt-1 h-14 rounded-lg bg-[#FFF4F2] px-5 text-foreground placeholder:text-[#63707C]"
+            placeholder="Enter phone number"
+          />
+        </View>
+
+        <View className="mt-5">
+          <Text className="text-base font-medium text-foreground">
+            Website <Text className="text-sm text-[#969696]">(Optional)</Text>
+          </Text>
+          <TextInput
+            className="mt-1 h-14 rounded-lg bg-[#FFF4F2] px-5 text-foreground placeholder:text-[#63707C]"
+            placeholder="Enter address"
+          />
+        </View>
+
+        <Pressable className="mt-10 flex w-full items-center rounded-full bg-primary py-4">
+          <Text className="text-lg font-medium text-white">Create</Text>
+        </Pressable>
       </ScrollView>
     </Layout>
   );
