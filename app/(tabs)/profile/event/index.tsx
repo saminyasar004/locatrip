@@ -11,7 +11,7 @@ import {
   Share2Icon,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { Image, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { cn } from 'utils';
 
@@ -87,6 +87,8 @@ export default function Index() {
 }
 
 function EventForYouTab() {
+  const router = useRouter();
+
   const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
   const [pickedDay, setPickedDay] = useState<string | null>(null);
   const [day, setDay] = useState([
@@ -191,11 +193,9 @@ function EventForYouTab() {
 
       <View className="flex h-auto w-full flex-col gap-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <TouchableHighlight
+          <Pressable
             key={index}
-            // key={index}
-            // onPress={() => router.push('/local-recommend/card-details')}
-            underlayColor={'transparent'}
+            onPress={() => router.push('/profile/event/[id]')}
             className="mt-5 h-auto w-full rounded-lg bg-white shadow-md">
             <View className="flex w-full flex-col gap-3 rounded-lg bg-white pb-5">
               <View className="relative flex h-44 items-center justify-center">
@@ -203,13 +203,13 @@ function EventForYouTab() {
                   source={require(`assets/event-1.jpg`)}
                   className="h-full w-full rounded-lg"
                 />
-                <TouchableHighlight className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                <Pressable className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
                   <Heart size={16} color={'#F86241'} />
-                </TouchableHighlight>
+                </Pressable>
 
-                <TouchableHighlight className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                <Pressable className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
                   <Share2Icon size={16} color={'#F86241'} />
-                </TouchableHighlight>
+                </Pressable>
               </View>
               <View className="flex flex-col gap-3 bg-white px-6">
                 <Text className="text-lg font-semibold">Summer Music Festival</Text>
@@ -231,18 +231,20 @@ function EventForYouTab() {
                   </View>
                 </View>
 
-                <TouchableHighlight
-                  className="mt-5 flex w-full items-center justify-center rounded-full border-2 border-primary bg-primary px-4 py-3 shadow-sm"
-                  underlayColor="transparent">
+                <Pressable
+                  onPress={() => {
+                    router.push('/profile/event/[id]');
+                  }}
+                  className="mt-5 flex w-full items-center justify-center rounded-full border-2 border-primary bg-primary px-4 py-3 shadow-sm">
                   <View className="flex flex-row items-center gap-2">
                     <Text className="flex items-center text-lg font-bold text-white">
                       View Details
                     </Text>
                   </View>
-                </TouchableHighlight>
+                </Pressable>
               </View>
             </View>
-          </TouchableHighlight>
+          </Pressable>
         ))}
       </View>
     </>
@@ -250,15 +252,15 @@ function EventForYouTab() {
 }
 
 function MyEventTab() {
+  const router = useRouter();
+
   return (
     <>
       <View className="flex h-auto w-full flex-col gap-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <TouchableHighlight
+          <Pressable
             key={index}
-            // key={index}
-            // onPress={() => router.push('/local-recommend/card-details')}
-            underlayColor={'transparent'}
+            onPress={() => router.push('/profile/event/[id]')}
             className="mt-5 h-auto w-full rounded-lg bg-white shadow-md">
             <View className="flex w-full flex-col gap-3 rounded-lg bg-white pb-5">
               <View className="relative flex h-44 items-center justify-center">
@@ -266,13 +268,13 @@ function MyEventTab() {
                   source={require(`assets/event-1.jpg`)}
                   className="h-full w-full rounded-lg"
                 />
-                <TouchableHighlight className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                <Pressable className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
                   <Heart size={16} color={'#F86241'} />
-                </TouchableHighlight>
+                </Pressable>
 
-                <TouchableHighlight className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                <Pressable className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
                   <Share2Icon size={16} color={'#F86241'} />
-                </TouchableHighlight>
+                </Pressable>
               </View>
               <View className="flex flex-col gap-3 bg-white px-6">
                 <Text className="text-lg font-semibold">Summer Music Festival</Text>
@@ -294,18 +296,20 @@ function MyEventTab() {
                   </View>
                 </View>
 
-                <TouchableHighlight
-                  className="mt-5 flex w-full items-center justify-center rounded-full border-2 border-primary bg-primary px-4 py-3 shadow-sm"
-                  underlayColor="transparent">
+                <Pressable
+                  onPress={() => {
+                    router.push('/profile/event/[id]');
+                  }}
+                  className="mt-5 flex w-full items-center justify-center rounded-full border-2 border-primary bg-primary px-4 py-3 shadow-sm">
                   <View className="flex flex-row items-center gap-2">
                     <Text className="flex items-center text-lg font-bold text-white">
                       View Details
                     </Text>
                   </View>
-                </TouchableHighlight>
+                </Pressable>
               </View>
             </View>
-          </TouchableHighlight>
+          </Pressable>
         ))}
       </View>
     </>
