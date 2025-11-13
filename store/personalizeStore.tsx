@@ -30,7 +30,7 @@ const usePersonalizeStore = create<PersonalizeState>((set, get) => ({
   error: null,
   personalizeItemsNames: [],
 
-  fetchAllPreferences: async () => {
+  fetchAllPreferences: async (): Promise<AxiosResponse<any>> => {
     const accessToken = useAuthStore.getState().accessToken;
     set({ isLoading: true, error: null });
     try {
@@ -42,18 +42,23 @@ const usePersonalizeStore = create<PersonalizeState>((set, get) => ({
 
       // Adjust this according to your backend's response structure
       console.log('Preference names:', response.data);
+
+      if (response.status === 200) {
       // Save token securely
       set({
         preferenceList: response.data,
         isLoading: false,
         error: null,
       });
+      }
+      return response;
     } catch (error: any) {
       set({
         error:
           error?.response?.data?.message || error.message || 'Failed to fetch all the preferences.',
         isLoading: false,
       });
+      throw error;
     }
   },
 
