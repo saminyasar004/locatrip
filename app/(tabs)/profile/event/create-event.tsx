@@ -174,6 +174,12 @@ export default function CreateEventScreen() {
             // }}
           />
         </View>
+
+        <View className="flex w-full flex-row items-center justify-between pt-6">
+          <View className="flex flex-col gap-3">
+            <Text className="text-base font-medium text-foreground">Start</Text>
+          </View>
+        </View>
       </ScrollView>
     </Layout>
   );
