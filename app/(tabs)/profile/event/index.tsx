@@ -33,7 +33,7 @@ export default function Index() {
 
         <View className="flex w-full items-center justify-center py-5">
           <TouchableHighlight
-            onPress={() => router.push('/create-event')}
+            onPress={() => router.push('/profile/event/create-event')}
             className="flex w-full items-center justify-center rounded-full border-2 border-primary bg-background px-4 py-4 shadow-sm"
             underlayColor="transparent">
             <View className="flex flex-row items-center gap-2">
