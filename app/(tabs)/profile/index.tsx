@@ -74,7 +74,7 @@ export default function Index() {
             </View>
 
             <TouchableHighlight
-              onPress={() => router.push('/personalize/step1')}
+              onPress={() => router.push('/profile/preference')}
               underlayColor={'transparent'}>
               <ChevronRight size={25} color={'#F86241'} />
             </TouchableHighlight>
