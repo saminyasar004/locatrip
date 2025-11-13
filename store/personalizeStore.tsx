@@ -15,20 +15,27 @@ interface PersonalizeState {
   preferenceList: PreferenceProps[];
   personalizeItems: number[];
   personalizeItemsNames: string[];
-  fetchAllPreferences: () => Promise<void>;
+  userPreferenceList: {
+    preferences_id: number;
+    preferences_name: string;
+  }[];
+  fetchAllPreferences: () => Promise<AxiosResponse<any>>;
+  createPreference: (preferenceIds: number[]) => Promise<AxiosResponse<any>>;
+  getUserPreferenceList: () => Promise<AxiosResponse<any>>;
+  deleteUserPreferences: (preferenceIds: number[]) => Promise<AxiosResponse<any>>;
   isLoading: boolean;
   error: string | null;
-  createPreference: (preferenceIds: number[]) => Promise<AxiosResponse<any>>;
 }
 
 const usePersonalizeStore = create<PersonalizeState>((set, get) => ({
   preferenceList: [],
   personalizeItems: [],
+  userPreferenceList: [],
   isLoading: false,
   error: null,
   personalizeItemsNames: [],
 
-  fetchAllPreferences: async () => {
+  fetchAllPreferences: async (): Promise<AxiosResponse<any>> => {
     const accessToken = useAuthStore.getState().accessToken;
     set({ isLoading: true, error: null });
     try {
@@ -36,21 +43,23 @@ const usePersonalizeStore = create<PersonalizeState>((set, get) => ({
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      console.log('Preference response:', response.data);
-
-      // Adjust this according to your backend's response structure
-      console.log('Preference names:', response.data);
-      // Save token securely
-      set({
-        preferenceList: response.data,
-        isLoading: false,
-        error: null,
-      });
+      if (response.status === 200) {
+        // Save token securely
+        set({
+          preferenceList: response.data,
+          isLoading: false,
+          error: null,
+        });
+      }
+      return response;
     } catch (error: any) {
+      console.log('Backend response data:', error.response?.data);
       set({
-        error: error?.response?.data?.message || error.message || 'Login failed',
+        error:
+          error?.response?.data?.message || error.message || 'Failed to fetch all the preferences.',
         isLoading: false,
       });
+      throw error;
     }
   },
 
@@ -78,9 +87,74 @@ const usePersonalizeStore = create<PersonalizeState>((set, get) => ({
 
       return response;
     } catch (error: any) {
+      console.log('Backend response data:', error.response?.data);
       console.error('Error creating preferences:', error.message);
       set({
         error: error?.response?.data?.message || error.message || 'Failed to create preferences',
+        isLoading: false,
+      });
+
+      // Return a rejected promise so callers can handle it
+      throw error;
+    }
+  },
+
+  getUserPreferenceList: async (): Promise<AxiosResponse<any>> => {
+    const accessToken = useAuthStore.getState().accessToken;
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.get(`${baseURL}/api/personalize/preferences/user/list/`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      // Save list securely
+      set({
+        userPreferenceList: response.data,
+        isLoading: false,
+        error: null,
+      });
+      return response;
+    } catch (error: any) {
+      console.log('Backend response data:', error.response?.data);
+      set({
+        error:
+          error?.response?.data?.message ||
+          error.message ||
+          'Failed to get all the users preferences list.',
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
+
+  deleteUserPreferences: async (preferenceIds: number[]) => {
+    const accessToken = useAuthStore.getState().accessToken;
+    set({ isLoading: true, error: null });
+    try {
+      const payload = { preferences: preferenceIds };
+
+      const response = await axios.delete(`${baseURL}/api/personalize/preferences/delete/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        data: payload,
+      });
+
+      if (response.status === 200) {
+        set({
+          userPreferenceList: response.data.preference_name || [],
+          isLoading: false,
+          error: null,
+        });
+      }
+
+      return response;
+    } catch (error: any) {
+      console.log('Backend response data:', error.response?.data);
+      console.error('Error deleting preferences:', error.message);
+      set({
+        error: error?.response?.data?.message || error.message || 'Failed to delete preferences',
         isLoading: false,
       });
 

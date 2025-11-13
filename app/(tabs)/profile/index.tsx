@@ -74,7 +74,7 @@ export default function Index() {
             </View>
 
             <TouchableHighlight
-              onPress={() => router.push('/personalize/step1')}
+              onPress={() => router.push('/profile/preference')}
               underlayColor={'transparent'}>
               <ChevronRight size={25} color={'#F86241'} />
             </TouchableHighlight>
@@ -103,20 +103,6 @@ export default function Index() {
 
             <TouchableHighlight
               onPress={() => router.push('/profile/my-trip')}
-              underlayColor={'transparent'}>
-              <ChevronRight size={25} color={'#F86241'} />
-            </TouchableHighlight>
-          </View>
-
-          <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
-            <View className="flex flex-row items-center gap-4">
-              <Wallet size={24} color={'#F86241'} />
-
-              <Text className="font-medium">Subscriptions</Text>
-            </View>
-
-            <TouchableHighlight
-              onPress={() => router.push('/my-plan/reviews')}
               underlayColor={'transparent'}>
               <ChevronRight size={25} color={'#F86241'} />
             </TouchableHighlight>
