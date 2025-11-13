@@ -1,12 +1,6 @@
 import { useRouter } from 'expo-router';
 import { SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
 
-interface PersonalizeItemProps {
-  id: number;
-  title: string;
-  isChecked: boolean;
-}
-
 export default function Index() {
   const router = useRouter();
 

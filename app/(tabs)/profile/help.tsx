@@ -5,9 +5,8 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { useState } from 'react';
 import { Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
-import { Toast } from 'toastify-react-native';
 import useAuthStore from 'store/authStore';
+import { Toast } from 'toastify-react-native';
 
 type Payload = {
   user_manual_email: string;

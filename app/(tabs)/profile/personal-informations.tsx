@@ -1,9 +1,9 @@
-import useProfileStore from 'store/profileStore';
 import Layout from 'components/layout';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Search, SquarePen, Star } from 'lucide-react-native';
+import { ArrowLeft, SquarePen } from 'lucide-react-native';
 import { useState } from 'react';
 import { Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import useProfileStore from 'store/profileStore';
 
 export default function Index() {
   const { updateProfile, full_name, email } = useProfileStore();
