@@ -16,6 +16,8 @@ interface PersonalizeState {
   personalizeItems: number[];
   personalizeItemsNames: string[];
   fetchAllPreferences: () => Promise<void>;
+  createPreference: (preferenceIds: number[]) => Promise<AxiosResponse<any>>;
+  getUserPreferenceList: () => Promise<void>;
   isLoading: boolean;
   error: string | null;
   createPreference: (preferenceIds: number[]) => Promise<AxiosResponse<any>>;
@@ -48,7 +50,8 @@ const usePersonalizeStore = create<PersonalizeState>((set, get) => ({
       });
     } catch (error: any) {
       set({
-        error: error?.response?.data?.message || error.message || 'Login failed',
+        error:
+          error?.response?.data?.message || error.message || 'Failed to fetch all the preferences.',
         isLoading: false,
       });
     }
