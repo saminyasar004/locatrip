@@ -1,11 +1,19 @@
-import Layout from 'components/layout';
+import useSubscriptionStore, { SubscriptionItemProps } from '@/store/useSubscriptionStore';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Check, Crown, MessagesSquare, Zap } from 'lucide-react-native';
-import { useMemo, useState } from 'react';
-import { Text, TouchableHighlight, useWindowDimensions, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableHighlight,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 
-const FreeTrialTab = () => (
+const FreeTrialTab = ({ subscriptionDetails }: { subscriptionDetails: SubscriptionItemProps }) => (
   <View className="w-full flex-1 flex-col gap-3 px-5 py-10">
     <View className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
       <Zap size={24} color={'#F86241'} fill={'#F86241'} />
@@ -142,13 +150,37 @@ export default function Index() {
     { key: 'premium', title: 'Premium' },
   ]);
 
+  const { fetchAllSubscription, payment, error, isLoading } = useSubscriptionStore();
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    fetchAllSubscription();
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchAllSubscription();
+    setRefreshing(false);
+  }, [fetchAllSubscription]);
+
   // Give TabView a real height so scenes can render even inside ScrollView/auto-height parents
   // Tweak the fraction as you like, or replace with a fixed px value.
+  const insets = useSafeAreaInsets();
   const tabHeight = useMemo(() => Math.max(1000, Math.floor(layout.height * 1)), [layout.height]);
 
   return (
-    <Layout>
-      <View className="row flex h-auto min-h-full w-full flex-1 flex-col items-start">
+    <View className="flex-1 bg-[#FBFEFE]" style={{ paddingTop: insets.top }}>
+      <ScrollView
+        className="h-full flex-1 bg-[#FBFEFE]"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            progressViewOffset={80}
+            onRefresh={onRefresh}
+            colors={['#F86241']}
+          />
+        }
+        contentContainerStyle={{ paddingBottom: 0, paddingHorizontal: 20 }}>
         <View className="flex w-full flex-row items-center gap-3 bg-white">
           <TouchableHighlight onPress={() => router.back()} underlayColor={'transparent'}>
             <ArrowLeft size={24} color={'#63707C'} />
@@ -157,30 +189,38 @@ export default function Index() {
           <Text className="w-full text-lg font-semibold text-[#313131]">Subscription</Text>
         </View>
 
-        <View className="flex w-full flex-col gap-1 py-4">
-          <View className="w-full" style={{ height: tabHeight }}>
-            <TabView
-              navigationState={{ index, routes }}
-              renderScene={renderScene}
-              onIndexChange={setIndex}
-              initialLayout={{ width: layout.width }}
-              style={{ flex: 1, backgroundColor: '#ffffff' }}
-              renderTabBar={(props) => (
-                <TabBar
-                  {...props}
-                  indicatorStyle={{ backgroundColor: '#F86241' }}
-                  style={{ backgroundColor: '#FFFFFF' }}
-                  tabStyle={{ height: 50 }}
-                  activeColor="#F86241"
-                  inactiveColor="#000000"
-                  pressColor="transparent"
-                  pressOpacity={1}
-                />
-              )}
-            />
+        {error && (
+          <View className="items-center justify-center py-4">
+            <Text className="text-[#63707C]">{error}</Text>
           </View>
-        </View>
-      </View>
-    </Layout>
+        )}
+
+        {!isLoading && !error && (
+          <View className="flex w-full flex-col gap-1 py-4">
+            <View className="w-full" style={{ height: tabHeight }}>
+              <TabView
+                navigationState={{ index, routes }}
+                renderScene={renderScene}
+                onIndexChange={setIndex}
+                initialLayout={{ width: layout.width }}
+                style={{ flex: 1, backgroundColor: '#ffffff' }}
+                renderTabBar={(props) => (
+                  <TabBar
+                    {...props}
+                    indicatorStyle={{ backgroundColor: '#F86241' }}
+                    style={{ backgroundColor: '#FFFFFF' }}
+                    tabStyle={{ height: 50 }}
+                    activeColor="#F86241"
+                    inactiveColor="#000000"
+                    pressColor="transparent"
+                    pressOpacity={1}
+                  />
+                )}
+              />
+            </View>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
