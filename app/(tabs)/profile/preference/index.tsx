@@ -1,14 +1,12 @@
+import usePersonalizeStore from '@/store/personalizeStore';
+import { cn } from '@/utils';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Check, Plus, Trash } from 'lucide-react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
-import { BlurView } from 'expo-blur';
-import usePersonalizeStore from '@/store/personalizeStore';
-import { Toast } from 'toastify-react-native';
-import { cn } from '@/utils';
-import Layout from '@/components/layout';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Toast } from 'toastify-react-native';
 
 export default function PreferenceScreen() {
   const insets = useSafeAreaInsets();
