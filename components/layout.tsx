@@ -60,25 +60,15 @@ export default function Layout({
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} barStyle="dark-content" />
-      <SafeAreaView className={cn('h-full w-full flex-1 bg-[#FBFEFE]', layoutStyle)}>
+      <SafeAreaView
+        edges={['top', 'left', 'right']}
+        className={cn('h-full w-full flex-1 bg-[#FBFEFE]', layoutStyle)}>
         <ScrollView
           className="flex-1"
           // contentContainerStyle={{ paddingBottom: 20, paddingTop: 20 }}>
         >
           {children}
         </ScrollView>
-
-        {insets.bottom > 0 && (
-          <View
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              height: insets.bottom,
-              width: '100%',
-              backgroundColor: 'white',
-            }}
-          />
-        )}
       </SafeAreaView>
     </>
   );

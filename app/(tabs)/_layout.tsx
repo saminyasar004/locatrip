@@ -2,8 +2,11 @@ import NoRippleTabButton from 'components/no-rippler-pressable';
 import { Tabs } from 'expo-router';
 import { Briefcase, House, ThumbsUp, UserRound } from 'lucide-react-native';
 import { StatusBar } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Layout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} barStyle="dark-content" />
@@ -21,9 +24,9 @@ export default function Layout() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            height: 80,
+            height: 60 + insets.bottom,
             paddingTop: 0,
-            paddingBottom: 0,
+            paddingBottom: insets.bottom,
             marginBottom: 0,
             marginTop: 0,
             backgroundColor: '#fff',
