@@ -160,8 +160,6 @@ export default function Index() {
       end_date: planData.endDate,
     };
 
-    console.log(payload);
-
     try {
       setLoadingSubmit(true);
       const response = await axios.post(`${baseURL}/api/personalize/itineraries/create/`, payload, {
