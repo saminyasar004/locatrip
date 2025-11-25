@@ -13,14 +13,14 @@ export default function RootLayout() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments[0] === '(tabs)';
+    const inAuthGroup = segments[0] === '(tabs)' || segments[0] === 'personalize';
+    const inPublicGroup = segments[0] === 'auth' || segments[0] === 'onboarding';
 
-    if (isAuthenticated && !inAuthGroup) {
-      // If user is signed in and not in the (tabs) group, redirect to home
-      // This covers login, register, onboarding, etc.
+    if (isAuthenticated && inPublicGroup) {
+      // If user is signed in and tries to access public routes (login, register, onboarding), redirect to home
       router.replace('/(tabs)/home');
     } else if (!isAuthenticated && inAuthGroup) {
-      // If user is not signed in and tries to access (tabs), redirect to login
+      // If user is not signed in and tries to access protected routes ((tabs), personalize), redirect to login
       router.replace('/auth/login');
     }
   }, [isAuthenticated, segments, isLoading]);
