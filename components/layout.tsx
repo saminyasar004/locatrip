@@ -1,15 +1,24 @@
 import { usePathname, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ScrollView, StatusBar, useColorScheme, View, ViewStyle } from 'react-native';
+import {
+  ScrollView,
+  StatusBar,
+  useColorScheme,
+  View,
+  ViewStyle,
+  RefreshControlProps,
+} from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cn } from 'utils';
 
 export default function Layout({
   children,
   layoutStyle,
+  refreshControl,
 }: {
   children?: React.ReactNode;
   layoutStyle?: string;
+  refreshControl?: React.ReactElement<RefreshControlProps>;
 }) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -65,6 +74,7 @@ export default function Layout({
         className={cn('h-full w-full flex-1 bg-[#FBFEFE]', layoutStyle)}>
         <ScrollView
           className="flex-1"
+          refreshControl={refreshControl}
           // contentContainerStyle={{ paddingBottom: 20, paddingTop: 20 }}>
         >
           {children}

@@ -15,8 +15,16 @@ import {
   Share2Icon,
   Star,
 } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Image,
+  RefreshControl,
+  Text,
+  TextInput,
+  TouchableHighlight,
+  View,
+} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import useAuthStore from 'store/authStore';
 import useUserItineraryStore, { ItineraryProps } from 'store/userItineraryStore';
@@ -34,6 +42,14 @@ export default function Index() {
   useEffect(() => {
     fetchActiveItineraries();
   }, []);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchActiveItineraries();
+    setRefreshing(false);
+  }, [fetchActiveItineraries]);
 
   const router = useRouter();
 
@@ -87,7 +103,15 @@ export default function Index() {
   }
 
   return (
-    <Layout>
+    <Layout
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['#F86241']}
+          tintColor="#F86241"
+        />
+      }>
       <View className="row flex h-auto min-h-full w-full flex-1 flex-col items-start">
         <View className="flex h-auto w-full flex-row items-center justify-between gap-5 pb-10">
           <View className="h-auto flex-row items-center gap-4">
