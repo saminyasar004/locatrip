@@ -60,8 +60,6 @@ export default function Index() {
 
   const [isTripTypePickerOpen, setIsTripTypePickerOpen] = useState(false);
   const [isBudgetPickerOpen, setIsBudgetPickerOpen] = useState(false);
-  const [isDurationPickerOpen, setIsDurationPickerOpen] = useState(false);
-  const [pickedDuration, setPickedDuration] = useState(null);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const [startDate, setStartDate] = useState(new Date());
@@ -161,6 +159,8 @@ export default function Index() {
       start_date: planData.startDate,
       end_date: planData.endDate,
     };
+
+    console.log(payload);
 
     try {
       setLoadingSubmit(true);
@@ -291,30 +291,6 @@ export default function Index() {
               }
               setItems={setBudget}
               placeholder="Pick your daily budget range"
-              style={{ backgroundColor: '#f8dcd7', borderColor: '#f8dcd7' }}
-              dropDownContainerStyle={{
-                backgroundColor: '#fff',
-                borderColor: '#fff',
-              }}
-              ArrowDownIconComponent={() => <ChevronDown size={20} color="#6E6E6E" />}
-              ArrowUpIconComponent={() => <ChevronUp size={20} color="#6E6E6E" />}
-            />
-          </View>
-
-          {/* Duration */}
-          <View className="z-10 mb-4">
-            <View className="mb-1 flex-row items-center gap-2">
-              <Clock3 size={16} color="#6A707C" />
-              <Text className="text-lg font-semibold text-[#575757]">Duration</Text>
-            </View>
-            <DropDownPicker
-              open={isDurationPickerOpen}
-              value={pickedDuration}
-              items={duration}
-              setOpen={setIsDurationPickerOpen}
-              setValue={setPickedDuration}
-              setItems={setDuration}
-              placeholder="Select duration"
               style={{ backgroundColor: '#f8dcd7', borderColor: '#f8dcd7' }}
               dropDownContainerStyle={{
                 backgroundColor: '#fff',
