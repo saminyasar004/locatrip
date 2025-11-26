@@ -1,8 +1,12 @@
+import SubscriptionView from '@/components/SubscriptionView';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
+import Modal from 'react-native-modal';
 
 export default function Index() {
   const router = useRouter();
+  const [isModalVisible, setModalVisible] = useState(false);
 
   return (
     <SafeAreaView className="bg-background">
@@ -16,7 +20,7 @@ export default function Index() {
           </View>
           <View className="flex w-full flex-row items-center justify-between gap-6">
             <TouchableHighlight
-              onPress={() => router.push('/personalize/step3')}
+              onPress={() => setModalVisible(true)}
               className="flex flex-1 items-center justify-center rounded-full bg-primary p-3 shadow-sm">
               <Text className="text-lg font-semibold text-white">Yes</Text>
             </TouchableHighlight>
@@ -28,6 +32,18 @@ export default function Index() {
             </TouchableHighlight>
           </View>
         </View>
+
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+          onBackButtonPress={() => setModalVisible(false)}
+          style={{ margin: 0 }}
+          useNativeDriver
+          hideModalContentWhileAnimating>
+          <View className="h-full w-full bg-white">
+            <SubscriptionView onBack={() => setModalVisible(false)} showHeader={true} />
+          </View>
+        </Modal>
       </ScrollView>
     </SafeAreaView>
   );
