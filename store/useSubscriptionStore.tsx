@@ -26,6 +26,7 @@ export interface SubscriptionStoreState {
   isLoading: boolean;
   error: string | null;
   fetchAllSubscription: () => Promise<AxiosResponse<any, any, {}> | undefined>;
+  checkout: (plan_type: string) => Promise<AxiosResponse<any, any, {}> | undefined>;
 }
 
 const useSubscriptionStore = create<SubscriptionStoreState>((set, get) => ({
@@ -54,6 +55,28 @@ const useSubscriptionStore = create<SubscriptionStoreState>((set, get) => ({
     } catch (error: any) {
       set({
         error: error?.response?.data?.message || error.message || 'Login failed',
+        isLoading: false,
+      });
+    }
+  },
+
+  checkout: async (plan_type: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const accessToken = useAuthStore.getState().accessToken;
+      const response = await axios.post(
+        `${baseURL}/api/payment/checkout/`,
+        { plan_type },
+        {
+          headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        }
+      );
+
+      set({ isLoading: false, error: null });
+      return response;
+    } catch (error: any) {
+      set({
+        error: error?.response?.data?.message || error.message || 'Checkout failed',
         isLoading: false,
       });
     }
