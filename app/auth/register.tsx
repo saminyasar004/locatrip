@@ -42,9 +42,11 @@ export default function Index() {
       await register(formData);
 
       if (!useAuthStore.getState().error) {
-        router.replace('/personalize/step1');
-
         Toast.success('Successfully registered!');
+
+        setTimeout(() => {
+          router.replace('/personalize/step1');
+        }, 50);
       }
       console.log('Successfully registered!');
     } catch (err: any) {
