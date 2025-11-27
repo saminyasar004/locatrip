@@ -41,7 +41,14 @@ export default function Index() {
           useNativeDriver
           hideModalContentWhileAnimating>
           <View className="h-full w-full bg-white">
-            <SubscriptionView onBack={() => setModalVisible(false)} showHeader={true} />
+            <SubscriptionView
+              onBack={() => setModalVisible(false)}
+              showHeader={true}
+              onSuccess={() => {
+                setModalVisible(false);
+                router.push('/personalize/step4');
+              }}
+            />
           </View>
         </Modal>
       </ScrollView>

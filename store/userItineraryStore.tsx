@@ -22,12 +22,60 @@ interface UserItineraryState {
   isLoading: boolean;
   error: string | null;
   fetchActiveItineraries: () => Promise<void>;
+  generateDay: (itineraryId: number) => Promise<any>;
+  createItinerary: (payload: any) => Promise<any>;
 }
 
 const useUserItineraryStore = create<UserItineraryState>((set, get) => ({
   itineraryList: [],
   isLoading: false,
   error: null,
+
+  createItinerary: async (payload: any) => {
+    set({ isLoading: true, error: null });
+    try {
+      const { accessToken } = useAuthStore.getState();
+      const response = await axios.post(`${baseURL}/api/personalize/itineraries/create/`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      set({ isLoading: false });
+      return response;
+    } catch (error: any) {
+      set({
+        error: error?.response?.data?.message || error.message || 'Failed to create itinerary',
+        isLoading: false,
+      });
+      return error.response || { status: 500, data: { message: error.message } };
+    }
+  },
+
+  generateDay: async (itineraryId: number) => {
+    set({ isLoading: true, error: null });
+    try {
+      const { accessToken } = useAuthStore.getState();
+      const response = await axios.post(
+        `${baseURL}/api/personalize/preferences/generate_day/`,
+        { itinerary_id: itineraryId },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      set({ isLoading: false });
+      return response;
+    } catch (error: any) {
+      set({
+        error: error?.response?.data?.message || error.message || 'Failed to generate day',
+        isLoading: false,
+      });
+      return error.response;
+    }
+  },
 
   fetchActiveItineraries: async () => {
     set({ isLoading: true, error: null });

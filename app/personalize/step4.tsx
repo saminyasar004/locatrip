@@ -19,6 +19,7 @@ import axios from 'axios';
 import { Toast } from 'toastify-react-native';
 import { baseURL } from 'config';
 import useAuthStore from 'store/authStore';
+import useUserItineraryStore from '@/store/userItineraryStore';
 
 export default function Index() {
   const router = useRouter();
@@ -162,23 +163,41 @@ export default function Index() {
 
     try {
       setLoadingSubmit(true);
-      const response = await axios.post(`${baseURL}/api/personalize/itineraries/create/`, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      console.log('Create Itinerary Response:', response.data);
+      const { createItinerary } = useUserItineraryStore.getState();
+      const response = await createItinerary(payload);
+      console.log('Step 4 - Create Itinerary Response:', response);
+      console.log('Step 4 - Response Data:', response.data);
 
-      if (response.status === 201 || response.data?.status === 201) {
+      if (
+        response.status === 201 ||
+        response.status === 200 ||
+        response.data?.status === 201 ||
+        response.data?.status === 200
+      ) {
         Toast.success(response.data?.message || 'Itinerary created successfully!');
-        router.push('/personalize/step5');
+        const itineraryId = response.data?.itinerary_id || response.data?.id;
+        console.log('Step 4 - Extracted Itinerary ID:', itineraryId);
+
+        if (itineraryId) {
+          router.push({ pathname: '/personalize/step5', params: { itineraryId } });
+        } else {
+          console.error('Step 4 - ID missing in response');
+          Toast.error('Itinerary created but ID is missing.');
+        }
       } else {
         Toast.error(response.data?.message || 'Failed to create itinerary.');
       }
     } catch (error: any) {
       console.log('Create itinerary error:', error?.response?.data || error);
-      Toast.error(error?.response?.data?.message || 'Something went wrong.');
+      let errorMessage = 'Something went wrong.';
+      if (error?.response?.data) {
+        errorMessage = error.response.data?.error || error.response.data?.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error?.response?.data === 'string') {
+        errorMessage = error.response.data;
+      }
+      Toast.error(errorMessage);
     } finally {
       setLoadingSubmit(false);
     }

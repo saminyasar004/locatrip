@@ -96,9 +96,14 @@ const PlanTab = ({
 interface SubscriptionViewProps {
   onBack?: () => void;
   showHeader?: boolean;
+  onSuccess?: () => void;
 }
 
-export default function SubscriptionView({ onBack, showHeader = true }: SubscriptionViewProps) {
+export default function SubscriptionView({
+  onBack,
+  showHeader = true,
+  onSuccess,
+}: SubscriptionViewProps) {
   const layout = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
@@ -187,7 +192,11 @@ export default function SubscriptionView({ onBack, showHeader = true }: Subscrip
                   navState.url.includes('checkout_success')
                 ) {
                   setShowGateway(false);
-                  if (onBack) onBack();
+                  if (onSuccess) {
+                    onSuccess();
+                  } else if (onBack) {
+                    onBack();
+                  }
                 }
               }}
               startInLoadingState
