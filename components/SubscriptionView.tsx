@@ -1,5 +1,5 @@
 import useSubscriptionStore, { SubscriptionItemProps } from '@/store/useSubscriptionStore';
-import { ArrowLeft, Check, Crown, MessagesSquare, Zap } from 'lucide-react-native';
+import { ArrowLeft, Check, Crown, MessagesSquare, Zap, X } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   RefreshControl,
@@ -9,9 +9,13 @@ import {
   useWindowDimensions,
   View,
   Linking,
+  Platform,
+  Modal,
+  SafeAreaView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TabBar, TabView } from 'react-native-tab-view';
+import { WebView } from 'react-native-webview';
 
 const getIconForPlan = (planName: string) => {
   const lower = planName.toLowerCase();
@@ -102,6 +106,10 @@ export default function SubscriptionView({ onBack, showHeader = true }: Subscrip
   const [refreshing, setRefreshing] = useState(false);
   const [index, setIndex] = useState(0);
 
+  // WebView State
+  const [showGateway, setShowGateway] = useState(false);
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+
   useEffect(() => {
     fetchAllSubscription();
   }, []);
@@ -115,8 +123,17 @@ export default function SubscriptionView({ onBack, showHeader = true }: Subscrip
   const handleUpgrade = async (planName: string) => {
     const response = await checkout(planName);
     if (response?.status === 200 && response.data?.checkout_url) {
-      await Linking.openURL(response.data.checkout_url);
-      if (onBack) onBack();
+      let url = response.data.checkout_url;
+
+      // Fix for Android Emulator (0.0.0.0 -> 10.0.2.2)
+      if (Platform.OS === 'android' && url.includes('0.0.0.0')) {
+        url = url.replace('0.0.0.0', '10.0.2.2');
+      } else if (Platform.OS === 'android' && url.includes('127.0.0.1')) {
+        url = url.replace('127.0.0.1', '10.0.2.2');
+      }
+
+      setCheckoutUrl(url);
+      setShowGateway(true);
     }
   };
 
@@ -141,6 +158,45 @@ export default function SubscriptionView({ onBack, showHeader = true }: Subscrip
 
   return (
     <View className="flex-1 bg-[#FBFEFE]">
+      {/* WebView Modal */}
+      <Modal
+        visible={showGateway}
+        onDismiss={() => setShowGateway(false)}
+        onRequestClose={() => setShowGateway(false)}
+        animationType="slide"
+        transparent={false}>
+        <SafeAreaView className="flex-1 bg-white">
+          <View className="flex-row items-center justify-between border-b border-gray-200 px-4 py-3">
+            <Text className="text-lg font-semibold">Checkout</Text>
+            <TouchableHighlight
+              onPress={() => setShowGateway(false)}
+              underlayColor="transparent"
+              className="p-2">
+              <X size={24} color="#000" />
+            </TouchableHighlight>
+          </View>
+          {checkoutUrl && (
+            <WebView
+              source={{ uri: checkoutUrl }}
+              style={{ flex: 1 }}
+              onNavigationStateChange={(navState) => {
+                // Check for success URL (0.0.0.0 or whatever indicates success)
+                if (
+                  navState.url.includes('0.0.0.0') ||
+                  navState.url.includes('success=true') ||
+                  navState.url.includes('checkout_success')
+                ) {
+                  setShowGateway(false);
+                  if (onBack) onBack();
+                }
+              }}
+              startInLoadingState
+              scalesPageToFit
+            />
+          )}
+        </SafeAreaView>
+      </Modal>
+
       <ScrollView
         className="h-full flex-1 bg-[#FBFEFE]"
         refreshControl={
