@@ -1,4 +1,5 @@
 import Layout from 'components/layout';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, SquarePen } from 'lucide-react-native';
 import { useState } from 'react';
@@ -6,10 +7,32 @@ import { Image, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import useProfileStore from 'store/profileStore';
 
 export default function Index() {
-  const { updateProfile, full_name, email } = useProfileStore();
+  const { updateProfile, full_name, email, image: profileImage } = useProfileStore();
   const router = useRouter();
 
-  const [profileData, setProfileData] = useState<{ full_name?: string; email?: string }>({});
+  const [profileData, setProfileData] = useState<{
+    full_name?: string;
+    email?: string;
+    image?: any;
+  }>({});
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+      setProfileData({ ...profileData, image: result.assets[0] });
+    }
+  };
 
   const updatePersonalInfo = async () => {
     console.log('Updating profile with data:', profileData);
@@ -39,9 +62,18 @@ export default function Index() {
           <View className="relative h-auto flex-row items-center justify-center py-5">
             {/* Avatar */}
             <View className="relative h-28 w-28 overflow-hidden rounded-full">
-              <Image source={require('assets/avatar.jpg')} className="h-full w-full" />
+              <Image
+                source={
+                  selectedImage
+                    ? { uri: selectedImage }
+                    : profileImage
+                      ? { uri: profileImage }
+                      : require('assets/avatar.jpg')
+                }
+                className="h-full w-full"
+              />
             </View>
-            <TouchableHighlight>
+            <TouchableHighlight onPress={pickImage} underlayColor="transparent">
               <View className="absolute -bottom-12 -right-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary">
                 <SquarePen size={16} color="#ffffff" />
               </View>
