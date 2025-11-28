@@ -27,12 +27,35 @@ export interface SubscriptionStoreState {
   error: string | null;
   fetchAllSubscription: () => Promise<AxiosResponse<any, any, {}> | undefined>;
   checkout: (plan_type: string) => Promise<AxiosResponse<any, any, {}> | undefined>;
+  checkSubscriptionStatus: () => Promise<boolean>;
 }
 
 const useSubscriptionStore = create<SubscriptionStoreState>((set, get) => ({
   payment: [],
   isLoading: false,
   error: null,
+
+  checkSubscriptionStatus: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const accessToken = useAuthStore.getState().accessToken;
+      const response = await axios.get(`${baseURL}/api/payment/user/subscription/status/`, {
+        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      });
+
+      set({ isLoading: false });
+      if (response.status === 200 && response.data?.active_subscription) {
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      set({
+        error: error?.response?.data?.message || error.message || 'Failed to check subscription',
+        isLoading: false,
+      });
+      return false;
+    }
+  },
 
   fetchAllSubscription: async () => {
     set({ isLoading: true, error: null });

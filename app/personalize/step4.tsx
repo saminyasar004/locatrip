@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -20,12 +20,13 @@ import { Toast } from 'toastify-react-native';
 import { baseURL } from 'config';
 import useAuthStore from 'store/authStore';
 import useUserItineraryStore from '@/store/userItineraryStore';
+import useSubscriptionStore from '@/store/useSubscriptionStore';
 
 export default function Index() {
   const router = useRouter();
   const { accessToken } = useAuthStore();
-
-  if (!accessToken) return router.replace('/auth/login');
+  const { checkSubscriptionStatus } = useSubscriptionStore();
+  const [checkingSubscription, setCheckingSubscription] = useState(true);
 
   // ---------- State ----------
   const [planData, setPlanData] = useState({
@@ -74,6 +75,31 @@ export default function Index() {
   const [loading, setLoading] = useState(false);
   const [showList, setShowList] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const checkSub = async () => {
+      if (!accessToken) return;
+
+      const hasSubscription = await checkSubscriptionStatus();
+      if (!hasSubscription) {
+        Toast.error('Active subscription required.');
+        router.replace('/(tabs)/profile/subscription');
+      } else {
+        setCheckingSubscription(false);
+      }
+    };
+    checkSub();
+  }, [accessToken]);
+
+  if (!accessToken) return router.replace('/auth/login');
+
+  if (checkingSubscription) {
+    return (
+      <View className="flex-1 items-center justify-center bg-primary">
+        <ActivityIndicator size="large" color="#ffffff" />
+      </View>
+    );
+  }
 
   const searchLocation = (text: string) => {
     setQuery(text);
