@@ -154,7 +154,17 @@ export default function Index() {
             </View>
 
             <TouchableHighlight
-              onPress={() => router.push('/my-plan/reviews')}
+              onPress={() =>
+                router.push({
+                  pathname: '/my-plan/reviews',
+                  params: {
+                    place_name: details.name,
+                    total_rating: details.total_rating || 0,
+                    total_reviews: details.total_reviews || 0,
+                    reviews: JSON.stringify(details.reviews || []),
+                  },
+                })
+              }
               underlayColor={'transparent'}>
               <ChevronRight size={25} color={'#F86241'} />
             </TouchableHighlight>

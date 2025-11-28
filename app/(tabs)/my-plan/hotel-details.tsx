@@ -115,31 +115,10 @@ export default function Index() {
               </View>
             )}
 
-            {details.phone_number && (
+            {details.phone && (
               <View className="flex w-full flex-row items-center justify-start gap-2">
                 <Phone size={18} color={'#F86241'} />
-                <Text className="text-lg font-medium">{details.phone_number}</Text>
-              </View>
-            )}
-
-            {details.email && (
-              <View className="flex w-full flex-row items-center justify-start gap-2">
-                <Mail size={18} color={'#F86241'} />
-                <Text className="text-lg font-medium">{details.email}</Text>
-              </View>
-            )}
-
-            {details.social_media?.facebook && (
-              <View className="flex w-full flex-row items-center justify-start gap-2">
-                <Facebook size={18} color={'#F86241'} />
-                <Text className="text-lg font-medium">{details.social_media.facebook}</Text>
-              </View>
-            )}
-
-            {details.social_media?.instagram && (
-              <View className="flex w-full flex-row items-center justify-start gap-2">
-                <Instagram size={18} color={'#F86241'} />
-                <Text className="text-lg font-medium">{details.social_media.instagram}</Text>
+                <Text className="text-lg font-medium">{details.phone}</Text>
               </View>
             )}
           </View>
@@ -149,12 +128,22 @@ export default function Index() {
               <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
 
               <Text className="font-medium">
-                {details.total_rating || 'N/A'}/5 ({details.reviews_count || 0} Reviews)
+                {details.total_rating || 'N/A'}/5 ({details.total_reviews || 0} Reviews)
               </Text>
             </View>
 
             <TouchableHighlight
-              onPress={() => router.push('/my-plan/reviews')}
+              onPress={() =>
+                router.push({
+                  pathname: '/my-plan/reviews',
+                  params: {
+                    place_name: details.name,
+                    total_rating: details.total_rating || 0,
+                    total_reviews: details.total_reviews || 0,
+                    reviews: JSON.stringify(details.reviews || []),
+                  },
+                })
+              }
               underlayColor={'transparent'}>
               <ChevronRight size={25} color={'#F86241'} />
             </TouchableHighlight>
