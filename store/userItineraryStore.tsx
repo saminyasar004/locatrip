@@ -17,17 +17,36 @@ export interface ItineraryProps {
   planning_progress: number;
 }
 
+export interface PlaceProps {
+  place_id: string;
+  place_name: string;
+  place_location: string;
+  place_image: string;
+  place_type: string;
+  place_rating: string;
+  place_description: string;
+}
+
+export interface DayPlanProps {
+  day_number: number;
+  date: string;
+  places: PlaceProps[];
+}
+
 interface UserItineraryState {
   itineraryList: ItineraryProps[];
+  dayPlans: DayPlanProps[];
   isLoading: boolean;
   error: string | null;
   fetchActiveItineraries: () => Promise<void>;
   generateDay: (itineraryId: number) => Promise<any>;
   createItinerary: (payload: any) => Promise<any>;
+  fetchAllDayPlans: (itineraryId: number) => Promise<void>;
 }
 
 const useUserItineraryStore = create<UserItineraryState>((set, get) => ({
   itineraryList: [],
+  dayPlans: [],
   isLoading: false,
   error: null,
 
@@ -101,6 +120,34 @@ const useUserItineraryStore = create<UserItineraryState>((set, get) => ({
     } catch (error: any) {
       set({
         error: error?.response?.data?.message || error.message || 'Login failed',
+        isLoading: false,
+      });
+    }
+  },
+  fetchAllDayPlans: async (itineraryId: number) => {
+    set({ isLoading: true, error: null });
+    try {
+      const { accessToken } = useAuthStore.getState();
+      const response = await axios.post(
+        `${baseURL}/api/personalize/home/all_day_plans/`,
+        { itinerary_id: itineraryId },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (response.status === 200 && response.data?.days) {
+        set({ dayPlans: response.data.days, isLoading: false });
+      } else {
+        set({ dayPlans: [], isLoading: false });
+      }
+    } catch (error: any) {
+      console.log('Fetch day plans error:', error);
+      set({
+        error: error?.response?.data?.message || error.message || 'Failed to fetch day plans',
         isLoading: false,
       });
     }

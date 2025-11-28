@@ -37,11 +37,19 @@ export default function Index() {
     itineraryList,
     fetchActiveItineraries,
     error: errorItinerary,
+    fetchAllDayPlans,
+    dayPlans,
   } = useUserItineraryStore();
 
   useEffect(() => {
     fetchActiveItineraries();
   }, []);
+
+  useEffect(() => {
+    if (itineraryList.length > 0) {
+      fetchAllDayPlans(itineraryList[0].id);
+    }
+  }, [itineraryList]);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -170,37 +178,51 @@ export default function Index() {
         </View>
 
         {/* Itinerary Cards */}
-        <View className="flex h-auto w-full flex-col items-center gap-3 rounded-lg bg-[#F86241]/15 p-3 py-6">
-          <View className="flex w-full flex-row items-center justify-between">
-            <Text className="text-lg font-semibold text-foreground">Day 3</Text>
+        {dayPlans.length > 0 && (
+          <View className="flex h-auto w-full flex-col items-center gap-3 rounded-lg bg-[#F86241]/15 p-3 py-6">
+            {dayPlans.map((day, dayIndex) => (
+              <View key={dayIndex} className="w-full gap-3">
+                <View className="flex w-full flex-row items-center justify-between">
+                  <Text className="text-lg font-semibold text-foreground">
+                    Day {day.day_number}
+                  </Text>
 
-            <View className="h-8 rounded-full bg-white p-1 px-4">
-              <Text className="text-base text-foreground">Nov 1</Text>
-            </View>
+                  <View className="h-8 rounded-full bg-white p-1 px-4">
+                    <Text className="text-base text-foreground">
+                      {format(parseISO(day.date), 'MMM dd')}
+                    </Text>
+                  </View>
+                </View>
+
+                {day.places.map((place, placeIndex) => (
+                  <View
+                    key={placeIndex}
+                    className="flex flex-row items-center justify-between gap-4 rounded-lg bg-white p-3 shadow-md">
+                    {/* img */}
+                    <View className="flex h-20 w-24 items-center justify-center overflow-hidden rounded-lg">
+                      <Image source={{ uri: place.place_image }} className="h-full w-full" />
+                    </View>
+
+                    {/* text */}
+                    <View className="flex flex-1 flex-col gap-1">
+                      <Text className="text-lg font-medium" numberOfLines={1}>
+                        {place.place_name}
+                      </Text>
+                      <Text className="text-base text-[#63707C]" numberOfLines={1}>
+                        {place.place_location}
+                      </Text>
+                    </View>
+
+                    {/* arrow */}
+                    <TouchableHighlight>
+                      <ChevronRight size={34} color={'#F86241'} />
+                    </TouchableHighlight>
+                  </View>
+                ))}
+              </View>
+            ))}
           </View>
-
-          {Array.from({ length: 3 }).map((_, index) => (
-            <View
-              key={index}
-              className="flex flex-row items-center justify-between gap-4 rounded-lg bg-white p-3 shadow-md">
-              {/* img */}
-              <View className="flex h-20 w-24 items-center justify-center overflow-hidden rounded-lg">
-                <Image source={require('assets/dinner.jpg')} className="h-full w-full" />
-              </View>
-
-              {/* text */}
-              <View className="flex flex-1 flex-col gap-1">
-                <Text className="text-lg font-medium">Central Market Tour</Text>
-                <Text className="text-base text-[#63707C]">Downtown San Jose</Text>
-              </View>
-
-              {/* arrow */}
-              <TouchableHighlight>
-                <ChevronRight size={34} color={'#F86241'} />
-              </TouchableHighlight>
-            </View>
-          ))}
-        </View>
+        )}
 
         <View className="flex w-full items-start pt-4">
           <Text className="text-lg font-semibold text-[#313131]">What's Happening Around You</Text>
