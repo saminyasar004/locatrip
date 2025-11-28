@@ -36,6 +36,17 @@ export default function PlaceDetails() {
   const [details, setDetails] = useState<PlaceDetailsProps | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const { width } = useWindowDimensions();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const onViewRef = useRef(({ viewableItems }: any) => {
+    if (viewableItems.length > 0) {
+      setActiveIndex(viewableItems[0].index || 0);
+    }
+  });
+
+  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
+
   useEffect(() => {
     const loadDetails = async () => {
       if (place_id && latitude && longitude) {
@@ -76,17 +87,6 @@ export default function PlaceDetails() {
       </Layout>
     );
   }
-
-  const { width } = useWindowDimensions();
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const onViewRef = useRef(({ viewableItems }: any) => {
-    if (viewableItems.length > 0) {
-      setActiveIndex(viewableItems[0].index || 0);
-    }
-  });
-
-  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
 
   return (
     <Layout>

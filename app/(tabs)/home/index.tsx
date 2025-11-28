@@ -316,8 +316,13 @@ export default function Index() {
           </View>
         )}
 
-        <View className="flex w-full items-start pt-4">
+        <View className="flex w-full flex-row items-center justify-between pt-4">
           <Text className="text-lg font-semibold text-[#313131]">What's Happening Around You</Text>
+          <Text
+            className="text-base font-semibold text-primary"
+            onPress={() => router.push('/home/happening-event')}>
+            View All
+          </Text>
         </View>
 
         <View
@@ -339,18 +344,16 @@ export default function Index() {
             <View
               className="absolute left-0 top-16 z-50 max-h-60 w-full overflow-hidden rounded-lg bg-white shadow-lg"
               style={{ elevation: 5 }}>
-              <FlatList
-                data={locationResults}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
+              <View className="flex flex-col">
+                {locationResults.map((item, index) => (
                   <TouchableOpacity
+                    key={index}
                     className="border-b border-gray-100 p-3"
                     onPress={() => selectLocation(item)}>
                     <Text className="text-sm text-gray-700">{item.display_name}</Text>
                   </TouchableOpacity>
-                )}
-                nestedScrollEnabled={true}
-              />
+                ))}
+              </View>
             </View>
           )}
 
