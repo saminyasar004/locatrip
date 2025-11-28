@@ -26,6 +26,7 @@ import {
   TouchableOpacity,
   View,
   FlatList,
+  Pressable,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import useAuthStore from 'store/authStore';
@@ -266,7 +267,9 @@ export default function Index() {
 
         <View className="flex w-full flex-row items-center justify-between py-8">
           <Text className="text-xl font-semibold text-foreground">Your Itinerary</Text>
-          <Text className="text-base font-semibold text-primary">View All</Text>
+          <Pressable onPress={() => router.push('/my-plan')}>
+            <Text className="text-base font-semibold text-primary">View All</Text>
+          </Pressable>
         </View>
 
         {/* Itinerary Cards */}
@@ -287,29 +290,43 @@ export default function Index() {
                 </View>
 
                 {day.places.map((place, placeIndex) => (
-                  <View
+                  <TouchableHighlight
                     key={placeIndex}
-                    className="flex flex-row items-center justify-between gap-4 rounded-lg bg-white p-3 shadow-md">
-                    {/* img */}
-                    <View className="flex h-20 w-24 items-center justify-center overflow-hidden rounded-lg">
-                      <Image source={{ uri: place.place_image }} className="h-full w-full" />
-                    </View>
+                    onPress={() =>
+                      router.push({
+                        pathname: '/my-plan/plan-details',
+                        params: {
+                          place_id: place.place_id,
+                          latitude: itineraryList[0]?.latitude || 0,
+                          longitude: itineraryList[0]?.longitude || 0,
+                          day_number: day.day_number,
+                        },
+                      })
+                    }
+                    underlayColor={'transparent'}
+                    className="flex w-full">
+                    <View className="flex flex-row items-center justify-between gap-4 rounded-lg bg-white p-3 shadow-md">
+                      {/* img */}
+                      <View className="flex h-20 w-24 items-center justify-center overflow-hidden rounded-lg">
+                        <Image source={{ uri: place.place_image }} className="h-full w-full" />
+                      </View>
 
-                    {/* text */}
-                    <View className="flex flex-1 flex-col gap-1">
-                      <Text className="text-lg font-medium" numberOfLines={1}>
-                        {place.place_name}
-                      </Text>
-                      <Text className="text-base text-[#63707C]" numberOfLines={1}>
-                        {place.place_location}
-                      </Text>
-                    </View>
+                      {/* text */}
+                      <View className="flex flex-1 flex-col gap-1">
+                        <Text className="text-lg font-medium" numberOfLines={1}>
+                          {place.place_name}
+                        </Text>
+                        <Text className="text-base text-[#63707C]" numberOfLines={1}>
+                          {place.place_location}
+                        </Text>
+                      </View>
 
-                    {/* arrow */}
-                    <TouchableHighlight>
-                      <ChevronRight size={34} color={'#F86241'} />
-                    </TouchableHighlight>
-                  </View>
+                      {/* arrow */}
+                      <TouchableHighlight>
+                        <ChevronRight size={34} color={'#F86241'} />
+                      </TouchableHighlight>
+                    </View>
+                  </TouchableHighlight>
                 ))}
               </View>
             ))}
