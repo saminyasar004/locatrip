@@ -33,6 +33,18 @@ export interface DayPlanProps {
   places: PlaceProps[];
 }
 
+export interface SuggestedPlaceProps {
+  place_id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  total_rating: number;
+  total_reviews: number;
+  distance: number;
+  thumbnail: string | null;
+  type: string[];
+}
+
 interface UserItineraryState {
   itineraryList: ItineraryProps[];
   dayPlans: DayPlanProps[];
@@ -42,6 +54,7 @@ interface UserItineraryState {
   generateDay: (itineraryId: number) => Promise<any>;
   createItinerary: (payload: any) => Promise<any>;
   fetchAllDayPlans: (itineraryId: number) => Promise<void>;
+  fetchSuggestedPlaces: (payload: any) => Promise<SuggestedPlaceProps[]>;
 }
 
 const useUserItineraryStore = create<UserItineraryState>((set, get) => ({
@@ -150,6 +163,26 @@ const useUserItineraryStore = create<UserItineraryState>((set, get) => ({
         error: error?.response?.data?.message || error.message || 'Failed to fetch day plans',
         isLoading: false,
       });
+    }
+  },
+  fetchSuggestedPlaces: async (payload: any) => {
+    // We don't set global loading here to avoid flickering entire screen for partial updates
+    try {
+      const { accessToken } = useAuthStore.getState();
+      const response = await axios.post(`${baseURL}/api/personalize/suggest/near_place/`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response.status === 200 && Array.isArray(response.data)) {
+        return response.data;
+      }
+      return [];
+    } catch (error: any) {
+      console.log('Fetch suggested places error:', error);
+      return [];
     }
   },
 }));

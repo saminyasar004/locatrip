@@ -15,7 +15,7 @@ import {
   Share2Icon,
   Star,
 } from 'lucide-react-native';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -23,11 +23,16 @@ import {
   Text,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   View,
+  FlatList,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import useAuthStore from 'store/authStore';
-import useUserItineraryStore, { ItineraryProps } from 'store/userItineraryStore';
+import useUserItineraryStore, {
+  ItineraryProps,
+  SuggestedPlaceProps,
+} from 'store/userItineraryStore';
 import { cn } from 'utils';
 
 export default function Index() {
@@ -39,6 +44,7 @@ export default function Index() {
     error: errorItinerary,
     fetchAllDayPlans,
     dayPlans,
+    fetchSuggestedPlaces,
   } = useUserItineraryStore();
 
   useEffect(() => {
@@ -70,8 +76,9 @@ export default function Index() {
     { label: 'Evening', value: 'evening' },
   ]);
 
+  // Radius Picker
   const [isDistancePickerOpen, setIsDistancePickerOpen] = useState(false);
-  const [pickedDistance, setPickedDistance] = useState<string | null>(null);
+  const [pickedDistance, setPickedDistance] = useState<string | null>('10-km');
   const [distance, setDistance] = useState([
     { label: '5 km', value: '5-km' },
     { label: '10 km', value: '10-km' },
@@ -87,6 +94,91 @@ export default function Index() {
     'Camping In Nature',
   ];
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // Suggested Places State
+  const [locationQuery, setLocationQuery] = useState('');
+  const [locationResults, setLocationResults] = useState<any[]>([]);
+  const [showLocationList, setShowLocationList] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const debounceRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const [currentLat, setCurrentLat] = useState<number | null>(null);
+  const [currentLong, setCurrentLong] = useState<number | null>(null);
+
+  const [attractions, setAttractions] = useState<SuggestedPlaceProps[]>([]);
+  const [artPlaces, setArtPlaces] = useState<SuggestedPlaceProps[]>([]);
+  const [festivals, setFestivals] = useState<SuggestedPlaceProps[]>([]);
+  const [restaurants, setRestaurants] = useState<SuggestedPlaceProps[]>([]);
+  const [hotels, setHotels] = useState<SuggestedPlaceProps[]>([]);
+
+  // Location Search
+  const searchLocation = (text: string) => {
+    setLocationQuery(text);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!text || text.trim().length < 1) {
+      setLocationResults([]);
+      return;
+    }
+
+    setLocationLoading(true);
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          text
+        )}&addressdetails=1&limit=5`;
+        const res = await fetch(url, {
+          headers: {
+            'User-Agent': 'locatip/1.0 (support@locatip.com)',
+            'Accept-Language': 'en',
+          },
+        });
+        const data = await res.json();
+        setLocationResults(data);
+        setShowLocationList(true);
+      } catch (err) {
+        console.log('Location search error:', err);
+      } finally {
+        setLocationLoading(false);
+      }
+    }, 400);
+  };
+
+  const selectLocation = (item: any) => {
+    setLocationQuery(item.display_name);
+    setCurrentLat(Number(item.lat));
+    setCurrentLong(Number(item.lon));
+    setLocationResults([]);
+    setShowLocationList(false);
+  };
+
+  // Fetch Suggested Places
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!currentLat || !currentLong) return;
+
+      const radius = pickedDistance ? parseInt(pickedDistance.split('-')[0]) * 1000 : 10000;
+
+      const fetchSection = async (type: string, setter: any) => {
+        const data = await fetchSuggestedPlaces({
+          latitude: currentLat,
+          longitude: currentLong,
+          radius: radius,
+          place_type: type,
+        });
+        setter(data);
+      };
+
+      await Promise.all([
+        fetchSection('park', setAttractions), // Most Visited Attractions
+        fetchSection('museum', setArtPlaces), // Art Enthusiasts
+        fetchSection('night_club', setFestivals), // Local Festivals (proxy)
+        fetchSection('restaurant', setRestaurants), // Restaurants
+        fetchSection('lodging', setHotels), // Hotels
+      ]);
+    };
+
+    fetchData();
+  }, [currentLat, currentLong, pickedDistance]);
 
   useEffect(() => {
     console.log(
@@ -228,52 +320,41 @@ export default function Index() {
           <Text className="text-lg font-semibold text-[#313131]">What's Happening Around You</Text>
         </View>
 
-        <View className="flex h-auto w-full flex-row items-center gap-5 py-3">
-          <View className="flex h-12 w-[30%] flex-row items-center justify-start rounded-lg bg-accent px-3">
+        <View
+          className="relative flex h-auto w-full flex-row items-center gap-5 py-3"
+          style={{ zIndex: 3000 }}>
+          <View className="flex h-12 flex-1 flex-row items-center justify-start rounded-lg bg-accent px-3">
             <MapPin color="#63707C" size={20} />
             <TextInput
-              className="max-w-[90%] text-[#63707C] placeholder:text-[#63707C]"
+              className="flex-1 text-[#63707C] placeholder:text-[#63707C]"
               placeholder="Location"
+              value={locationQuery}
+              onChangeText={searchLocation}
             />
+            {locationLoading && <ActivityIndicator size="small" color="#F86241" />}
           </View>
 
-          <View className="flex h-full w-[30%] flex-col gap-2" style={{ zIndex: 1000 }}>
-            <DropDownPicker
-              open={isDayPickerOpen}
-              value={pickedDay}
-              items={day}
-              setOpen={setIsDayPickerOpen}
-              setValue={setPickedDay}
-              setItems={setDay}
-              placeholder="All Day"
-              style={{
-                backgroundColor: '#f8dcd7',
-                borderColor: '#f8dcd7',
-                flex: 1,
-                zIndex: 2000, // Higher zIndex for Trip Type
-                minHeight: 40,
-              }}
-              ArrowDownIconComponent={({ style }) => <ChevronDown size={24} color={'#6E6E6E'} />}
-              ArrowUpIconComponent={({ style }) => <ChevronUp size={24} color={'#6E6E6E'} />}
-              dropDownContainerStyle={{
-                backgroundColor: '#ffffff',
-                borderColor: '#ffffff',
-                borderRadius: 10,
-                zIndex: 2000, // Match zIndex
-              }}
-              labelStyle={{
-                color: '#575757',
-                fontWeight: '500',
-              }}
-              selectedItemContainerStyle={{
-                backgroundColor: '#f8dcd7',
-                borderRadius: 8,
-              }}
-              closeOnBackPressed={true}
-            />
-          </View>
+          {/* Location Autocomplete List */}
+          {showLocationList && locationResults.length > 0 && (
+            <View
+              className="absolute left-0 top-16 z-50 max-h-60 w-full overflow-hidden rounded-lg bg-white shadow-lg"
+              style={{ elevation: 5 }}>
+              <FlatList
+                data={locationResults}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    className="border-b border-gray-100 p-3"
+                    onPress={() => selectLocation(item)}>
+                    <Text className="text-sm text-gray-700">{item.display_name}</Text>
+                  </TouchableOpacity>
+                )}
+                nestedScrollEnabled={true}
+              />
+            </View>
+          )}
 
-          <View className="flex h-full w-[30%] flex-col gap-2" style={{ zIndex: 1000 }}>
+          <View className="flex h-full w-[35%] flex-col gap-2" style={{ zIndex: 1000 }}>
             <DropDownPicker
               open={isDistancePickerOpen}
               value={pickedDistance}
@@ -281,12 +362,12 @@ export default function Index() {
               setOpen={setIsDistancePickerOpen}
               setValue={setPickedDistance}
               setItems={setDistance}
-              placeholder="5Km"
+              placeholder="10 km"
               style={{
                 backgroundColor: '#f8dcd7',
                 borderColor: '#f8dcd7',
                 flex: 1,
-                zIndex: 2000, // Higher zIndex for Trip Type
+                zIndex: 2000,
                 minHeight: 40,
               }}
               ArrowDownIconComponent={({ style }) => <ChevronDown size={24} color={'#6E6E6E'} />}
@@ -295,7 +376,7 @@ export default function Index() {
                 backgroundColor: '#ffffff',
                 borderColor: '#ffffff',
                 borderRadius: 10,
-                zIndex: 2000, // Match zIndex
+                zIndex: 2000,
               }}
               labelStyle={{
                 color: '#575757',
@@ -334,196 +415,69 @@ export default function Index() {
           ))}
         </View>
 
-        <TouchableHighlight
-          onPress={() => router.push('/home/happening-event')}
-          underlayColor={'transparent'}
-          className="flex w-full items-end py-2">
-          <Text className="text-base font-semibold text-primary">View All</Text>
-        </TouchableHighlight>
-
-        <View className="flex w-full flex-row flex-wrap items-center justify-between gap-[10px] py-4">
-          {/* Event cards */}
-          {Array.from({ length: 2 }).map((_, index) => (
-            <View key={index} className="flex w-[48%] flex-col gap-3 rounded-lg bg-white pb-5">
-              <View className="relative flex h-40 items-center justify-center">
-                <Image
-                  source={require(`assets/event-1.jpg`)}
-                  className="h-full w-full rounded-lg"
-                />
-                <TouchableHighlight className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
-                  <Heart size={16} color={'#F86241'} />
-                </TouchableHighlight>
-
-                <TouchableHighlight className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
-                  <Share2Icon size={16} color={'#F86241'} />
-                </TouchableHighlight>
-              </View>
-              <View className="flex flex-col gap-3 bg-white px-6">
-                <Text className="text-lg font-medium">Dance Fiesta</Text>
-                <View className="flex w-full flex-row items-center justify-between">
-                  <View className="flex flex-row items-center gap-2">
-                    <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
-                    <Text className="font-medium text-[#63707C]">4.8</Text>
-                  </View>
-                  <Text className="text-[#63707C]">2.5 Km</Text>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
-
-        <View className="flex w-full flex-row items-center justify-between py-2">
-          <Text className="text-xl font-semibold text-foreground">Most Visited Attractions</Text>
-          <Text className="text-base font-semibold text-primary">View All</Text>
-        </View>
-
-        <View className="flex w-full flex-row flex-wrap items-center justify-between gap-[10px] py-4">
-          {/* Event cards */}
-          {Array.from({ length: 2 }).map((_, index) => (
-            <View key={index} className="flex w-[48%] flex-col gap-3 rounded-lg bg-white pb-5">
-              <View className="flex h-40 items-center justify-center">
-                <Image
-                  source={require(`assets/event-2.jpg`)}
-                  className="h-full w-full rounded-lg"
-                />
-              </View>
-              <View className="flex flex-col gap-3 bg-white px-6">
-                <Text className="text-lg font-medium">Dance Fiesta</Text>
-                <View className="flex w-full flex-row items-center justify-between">
-                  <View className="flex flex-row items-center gap-2">
-                    <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
-                    <Text className="font-medium text-[#63707C]">4.8</Text>
-                  </View>
-                  <Text className="text-[#63707C]">2.5 Km</Text>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
-
-        <View className="flex w-full flex-row items-center justify-between py-2">
-          <Text className="text-xl font-semibold text-foreground">
-            Most Visited Art Enthusiasts
-          </Text>
-          <Text className="text-base font-semibold text-primary">View All</Text>
-        </View>
-
-        <View className="flex w-full flex-row flex-wrap items-center justify-between gap-[10px] py-4">
-          {/* Event cards */}
-          {Array.from({ length: 2 }).map((_, index) => (
-            <View key={index} className="flex w-[48%] flex-col gap-3 rounded-lg bg-white pb-5">
-              <View className="flex h-40 items-center justify-center">
-                <Image
-                  source={require(`assets/event-3.jpg`)}
-                  className="h-full w-full rounded-lg"
-                />
-              </View>
-              <View className="flex flex-col gap-3 bg-white px-6">
-                <Text className="text-lg font-medium">Dance Fiesta</Text>
-                <View className="flex w-full flex-row items-center justify-between">
-                  <View className="flex flex-row items-center gap-2">
-                    <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
-                    <Text className="font-medium text-[#63707C]">4.8</Text>
-                  </View>
-                  <Text className="text-[#63707C]">2.5 Km</Text>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
-
-        <View className="flex w-full flex-row items-center justify-between py-2">
-          <Text className="text-xl font-semibold text-foreground">
-            Most Visited Local Festivals and Events
-          </Text>
-          <Text className="text-base font-semibold text-primary">View All</Text>
-        </View>
-
-        <View className="flex w-full flex-row flex-wrap items-center justify-between gap-[10px] py-4">
-          {/* Event cards */}
-          {Array.from({ length: 2 }).map((_, index) => (
-            <View key={index} className="flex w-[48%] flex-col gap-3 rounded-lg bg-white pb-5">
-              <View className="flex h-40 items-center justify-center">
-                <Image
-                  source={require(`assets/event-4.jpg`)}
-                  className="h-full w-full rounded-lg"
-                />
-              </View>
-              <View className="flex flex-col gap-3 bg-white px-6">
-                <Text className="text-lg font-medium">Dance Fiesta</Text>
-                <View className="flex w-full flex-row items-center justify-between">
-                  <View className="flex flex-row items-center gap-2">
-                    <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
-                    <Text className="font-medium text-[#63707C]">4.8</Text>
-                  </View>
-                  <Text className="text-[#63707C]">2.5 Km</Text>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
-
-        <View className="flex w-full flex-row items-center justify-between py-2">
-          <Text className="text-xl font-semibold text-foreground">Most Visited Restaurant</Text>
-          <Text className="text-base font-semibold text-primary">View All</Text>
-        </View>
-
-        <View className="flex w-full flex-row flex-wrap items-center justify-between gap-[10px] py-4">
-          {/* Event cards */}
-          {Array.from({ length: 2 }).map((_, index) => (
-            <View key={index} className="flex w-[48%] flex-col gap-3 rounded-lg bg-white pb-5">
-              <View className="flex h-40 items-center justify-center">
-                <Image
-                  source={require(`assets/event-5.jpg`)}
-                  className="h-full w-full rounded-lg"
-                />
-              </View>
-              <View className="flex flex-col gap-3 bg-white px-6">
-                <Text className="text-lg font-medium">Dance Fiesta</Text>
-                <View className="flex w-full flex-row items-center justify-between">
-                  <View className="flex flex-row items-center gap-2">
-                    <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
-                    <Text className="font-medium text-[#63707C]">4.8</Text>
-                  </View>
-                  <Text className="text-[#63707C]">2.5 Km</Text>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
-
-        <View className="flex w-full flex-row items-center justify-between py-2">
-          <Text className="text-xl font-semibold text-foreground">
-            Most Visited Hotel & Resorts
-          </Text>
-          <Text className="text-base font-semibold text-primary">View All</Text>
-        </View>
-
-        <View className="flex w-full flex-row flex-wrap items-center justify-between gap-[10px] py-4">
-          {/* Event cards */}
-          {Array.from({ length: 2 }).map((_, index) => (
-            <View key={index} className="flex w-[48%] flex-col gap-3 rounded-lg bg-white pb-5">
-              <View className="flex h-40 items-center justify-center">
-                <Image
-                  source={require(`assets/event-6.jpg`)}
-                  className="h-full w-full rounded-lg"
-                />
-              </View>
-              <View className="flex flex-col gap-3 bg-white px-6">
-                <Text className="text-lg font-medium">Dance Fiesta</Text>
-                <View className="flex w-full flex-row items-center justify-between">
-                  <View className="flex flex-row items-center gap-2">
-                    <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
-                    <Text className="font-medium text-[#63707C]">4.8</Text>
-                  </View>
-                  <Text className="text-[#63707C]">2.5 Km</Text>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
+        <SuggestedPlaceSection title="Most Visited Attractions" places={attractions} />
+        <SuggestedPlaceSection title="Most Visited Art Enthusiasts" places={artPlaces} />
+        <SuggestedPlaceSection title="Most Visited Local Festivals and Events" places={festivals} />
+        <SuggestedPlaceSection title="Most Visited Restaurant" places={restaurants} />
+        <SuggestedPlaceSection title="Most Visited Hotel & Resorts" places={hotels} />
       </View>
     </Layout>
+  );
+}
+
+function SuggestedPlaceSection({
+  title,
+  places,
+}: {
+  title: string;
+  places: SuggestedPlaceProps[];
+}) {
+  if (!places || places.length === 0) return null;
+
+  return (
+    <View className="w-full">
+      <View className="flex w-full flex-row items-center justify-between py-2">
+        <Text className="text-xl font-semibold text-foreground">{title}</Text>
+        <Text className="text-base font-semibold text-primary">View All</Text>
+      </View>
+
+      <View className="flex w-full flex-row flex-wrap items-start justify-between gap-y-4 py-4">
+        {places.slice(0, 4).map((place, index) => (
+          <View
+            key={index}
+            className="flex w-[48%] flex-col gap-3 rounded-lg bg-white pb-5 shadow-sm">
+            <View className="relative flex h-40 items-center justify-center overflow-hidden rounded-t-lg">
+              <Image
+                source={{ uri: place.thumbnail || 'https://via.placeholder.com/150' }}
+                className="h-full w-full"
+                resizeMode="cover"
+              />
+              <TouchableHighlight className="absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80">
+                <Heart size={16} color={'#F86241'} />
+              </TouchableHighlight>
+
+              <TouchableHighlight className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80">
+                <Share2Icon size={16} color={'#F86241'} />
+              </TouchableHighlight>
+            </View>
+            <View className="flex flex-col gap-2 px-3">
+              <Text className="text-base font-medium" numberOfLines={1}>
+                {place.name}
+              </Text>
+              <View className="flex w-full flex-row items-center justify-between">
+                <View className="flex flex-row items-center gap-1">
+                  <Star size={14} fill={'#E7AE33'} color={'#E7AE33'} />
+                  <Text className="text-xs font-medium text-[#63707C]">
+                    {place.total_rating || 'N/A'}
+                  </Text>
+                </View>
+                <Text className="text-xs text-[#63707C]">{place.distance?.toFixed(1)} km</Text>
+              </View>
+            </View>
+          </View>
+        ))}
+      </View>
+    </View>
   );
 }
 
