@@ -106,72 +106,79 @@ export default function Index() {
               </LinearGradient>
             </View>
 
-            <View className="flex w-full flex-row items-center justify-between py-8">
-              <Text className="text-xl font-semibold text-foreground">Your Itinerary</Text>
-              <Text className="text-base font-semibold text-primary">View All</Text>
-            </View>
-
             {/* Day Plans */}
-            {dayPlans.length > 0 ? (
-              <View className="flex w-full flex-col gap-4">
-                {dayPlans.map((day, dayIndex) => (
-                  <View
-                    key={dayIndex}
-                    className="flex h-auto w-full flex-col items-center gap-3 rounded-lg bg-[#F86241]/15 p-3 py-6">
-                    <View className="flex w-full flex-row items-center justify-between">
-                      <Text className="text-lg font-semibold text-foreground">
-                        Day {day.day_number}
-                      </Text>
-
-                      <View className="h-8 rounded-full bg-white p-1 px-4">
-                        <Text className="text-base text-foreground">
-                          {format(parseISO(day.date), 'MMM dd')}
+            <View className="my-6 flex w-full flex-1">
+              {dayPlans.length > 0 ? (
+                <View className="flex w-full flex-col gap-4">
+                  {dayPlans.map((day, dayIndex) => (
+                    <View
+                      key={dayIndex}
+                      className="flex h-auto w-full flex-col items-center gap-3 rounded-lg bg-[#F86241]/15 p-3 py-6">
+                      <View className="flex w-full flex-row items-center justify-between">
+                        <Text className="text-lg font-semibold text-foreground">
+                          Day {day.day_number}
                         </Text>
-                      </View>
-                    </View>
 
-                    {day.places.map((place, placeIndex) => (
-                      <TouchableHighlight
-                        key={placeIndex}
-                        onPress={() => router.push('/my-plan/plan-details')}
-                        underlayColor={'transparent'}
-                        className="flex w-full">
-                        <View className="flex flex-row items-center justify-between gap-4 rounded-lg bg-white p-3 shadow-md">
-                          {/* img */}
-                          <View className="flex h-20 w-24 items-center justify-center overflow-hidden rounded-lg">
-                            <Image
-                              source={{
-                                uri: place.place_image || 'https://via.placeholder.com/150',
-                              }}
-                              className="h-full w-full"
-                            />
-                          </View>
-
-                          {/* text */}
-                          <View className="flex flex-1 flex-col gap-1">
-                            <Text className="text-lg font-medium" numberOfLines={1}>
-                              {place.place_name}
-                            </Text>
-                            <Text className="text-base text-[#63707C]" numberOfLines={1}>
-                              {place.place_location}
-                            </Text>
-                          </View>
-
-                          {/* arrow */}
-                          <TouchableHighlight>
-                            <ChevronRight size={34} color={'#F86241'} />
-                          </TouchableHighlight>
+                        <View className="h-8 rounded-full bg-white p-1 px-4">
+                          <Text className="text-base text-foreground">
+                            {format(parseISO(day.date), 'MMM dd')}
+                          </Text>
                         </View>
-                      </TouchableHighlight>
-                    ))}
-                  </View>
-                ))}
-              </View>
-            ) : (
-              <View className="flex-1 items-center justify-center py-10">
-                <Text className="text-gray-500">No day plans available yet.</Text>
-              </View>
-            )}
+                      </View>
+
+                      {day.places.map((place, placeIndex) => (
+                        <TouchableHighlight
+                          key={placeIndex}
+                          onPress={() =>
+                            router.push({
+                              pathname: '/my-plan/plan-details',
+                              params: {
+                                place_id: place.place_id,
+                                latitude: itineraryList[0]?.latitude || 0,
+                                longitude: itineraryList[0]?.longitude || 0,
+                                day_number: day.day_number,
+                              },
+                            })
+                          }
+                          underlayColor={'transparent'}
+                          className="flex w-full">
+                          <View className="flex flex-row items-center justify-between gap-4 rounded-lg bg-white p-3 shadow-md">
+                            {/* img */}
+                            <View className="flex h-20 w-24 items-center justify-center overflow-hidden rounded-lg">
+                              <Image
+                                source={{
+                                  uri: place.place_image || 'https://via.placeholder.com/150',
+                                }}
+                                className="h-full w-full"
+                              />
+                            </View>
+
+                            {/* text */}
+                            <View className="flex flex-1 flex-col gap-1">
+                              <Text className="text-lg font-medium" numberOfLines={1}>
+                                {place.place_name}
+                              </Text>
+                              <Text className="text-base text-[#63707C]" numberOfLines={1}>
+                                {place.place_location}
+                              </Text>
+                            </View>
+
+                            {/* arrow */}
+                            <TouchableHighlight>
+                              <ChevronRight size={34} color={'#F86241'} />
+                            </TouchableHighlight>
+                          </View>
+                        </TouchableHighlight>
+                      ))}
+                    </View>
+                  ))}
+                </View>
+              ) : (
+                <View className="flex-1 items-center justify-center py-10">
+                  <Text className="text-gray-500">No day plans available yet.</Text>
+                </View>
+              )}
+            </View>
           </>
         ) : (
           <View className="flex-1 items-center justify-center py-10">

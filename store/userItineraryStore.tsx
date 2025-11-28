@@ -25,6 +25,8 @@ export interface PlaceProps {
   place_type: string;
   place_rating: string;
   place_description: string;
+  place_lat?: number;
+  place_long?: number;
 }
 
 export interface DayPlanProps {
@@ -59,6 +61,7 @@ export interface PlaceDetailsProps {
   opening_hours: string[];
   photos: string[];
   total_rating?: number;
+  total_reviews?: number;
   reviews?: {
     author: string;
     rating: number;
