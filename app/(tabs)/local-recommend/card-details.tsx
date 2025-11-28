@@ -1,5 +1,5 @@
 import Layout from 'components/layout';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   ArrowLeft,
   Calendar,
@@ -10,15 +10,58 @@ import {
   Share2Icon,
   Star,
 } from 'lucide-react-native';
-import { Image, Text, TouchableHighlight, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, Text, TouchableHighlight, View } from 'react-native';
+import useUserItineraryStore, { PlaceDetailsProps } from 'store/userItineraryStore';
 
 export default function Index() {
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const { place_id, latitude, longitude } = params;
+  const { fetchPlaceDetails } = useUserItineraryStore();
+
+  const [details, setDetails] = useState<PlaceDetailsProps | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadDetails = async () => {
+      if (place_id && latitude && longitude) {
+        const data = await fetchPlaceDetails({
+          place_id,
+          latitude,
+          longitude,
+        });
+        setDetails(data);
+        setLoading(false);
+      }
+    };
+    loadDetails();
+  }, [place_id, latitude, longitude]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#F86241" />
+        </View>
+      </Layout>
+    );
+  }
+
+  if (!details) {
+    return (
+      <Layout>
+        <View className="flex-1 items-center justify-center">
+          <Text>Failed to load details.</Text>
+        </View>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
       <View className="row flex h-auto min-h-full w-full flex-1 flex-col items-start">
-        <View className="flex w-full flex-row items-center gap-3 bg-white">
+        <View className="flex w-full flex-row items-center gap-3 bg-white pt-4">
           <TouchableHighlight onPress={() => router.back()} underlayColor={'transparent'}>
             <ArrowLeft size={24} color={'#63707C'} />
           </TouchableHighlight>
@@ -27,7 +70,10 @@ export default function Index() {
         </View>
 
         <View className="relative mt-5 flex h-60 w-full items-center justify-center">
-          <Image source={require(`assets/event-1.jpg`)} className="h-full w-full rounded-lg" />
+          <Image
+            source={{ uri: details.photos?.[0] || 'https://via.placeholder.com/400' }}
+            className="h-full w-full rounded-lg"
+          />
           <TouchableHighlight className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white">
             <Heart size={16} color={'#F86241'} />
           </TouchableHighlight>
@@ -38,40 +84,43 @@ export default function Index() {
         </View>
 
         <View className="flex w-full flex-col items-start gap-3 py-4">
-          <Text className="text-2xl font-semibold text-foreground">Arenal Sunrise Jungle Trek</Text>
+          <Text className="text-2xl font-semibold text-foreground">{details.name}</Text>
 
           <View className="flex w-full flex-row items-center justify-start gap-5">
             <View className="flex flex-row items-center gap-2">
               <Star size={16} fill={'#E7AE33'} color={'#E7AE33'} />
-              <Text className="font-medium text-[#63707C]">4.8</Text>
+              <Text className="font-medium text-[#63707C]">{details.total_rating || 'N/A'}</Text>
             </View>
-            <Text className="text-[#63707C]">2.5 Km</Text>
+            <Text className="text-[#63707C]">
+              {details.coordinates
+                ? `${details.coordinates.lat.toFixed(2)}, ${details.coordinates.lng.toFixed(2)}`
+                : 'Location unavailable'}
+            </Text>
           </View>
 
           <View className="flex w-full flex-col gap-2 py-3">
             <Text className="leading-normal text-[#63707C]">
-              Embark on an unforgettable journey through the lush Arenal rainforest. This guided
-              trek takes you deep into the heart of the jungle, offering breathtaking views of the
-              Arenal Volcano at sunrise. Discover diverse flora and fauna, including monkeys,
-              sloths, and exotic birds, in their natural habitat. Our experienced guides will share
-              fascinating insights into the ecosystem and local culture. Perfect for nature lovers
-              and adventure seekers!
+              {details.description || 'No description available.'}
             </Text>
           </View>
 
-          <View className="flex w-full flex-row items-center gap-3">
-            <Calendar size={16} color={'#F86241'} />
-            <Text className="text-sm font-medium">Available Daily</Text>
-          </View>
+          {details.opening_hours && details.opening_hours.length > 0 && (
+            <>
+              <View className="flex w-full flex-row items-center gap-3">
+                <Calendar size={16} color={'#F86241'} />
+                <Text className="text-sm font-medium">Available Daily</Text>
+              </View>
 
-          <View className="flex w-full flex-row items-center gap-3">
-            <Clock size={16} color={'#F86241'} />
-            <Text className="text-sm font-medium">18:00 - 23:00</Text>
-          </View>
+              <View className="flex w-full flex-row items-center gap-3">
+                <Clock size={16} color={'#F86241'} />
+                <Text className="text-sm font-medium">{details.opening_hours[0]}</Text>
+              </View>
+            </>
+          )}
 
           <View className="flex w-full flex-row items-center gap-3">
             <MapPin size={16} color={'#F86241'} />
-            <Text className="text-sm font-medium">La Fortuna, Alajuela Province, Costa Rica</Text>
+            <Text className="text-sm font-medium">{details.address}</Text>
           </View>
         </View>
 
