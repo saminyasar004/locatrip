@@ -45,6 +45,29 @@ export interface SuggestedPlaceProps {
   type: string[];
 }
 
+export interface PlaceDetailsProps {
+  place_id: string;
+  name: string;
+  description: string;
+  address: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  phone: string;
+  website: string;
+  opening_hours: string[];
+  photos: string[];
+  total_rating?: number;
+  reviews?: {
+    author: string;
+    rating: number;
+    text: string;
+    time: string;
+  }[];
+  maps_link?: string;
+}
+
 interface UserItineraryState {
   itineraryList: ItineraryProps[];
   dayPlans: DayPlanProps[];
@@ -55,6 +78,7 @@ interface UserItineraryState {
   createItinerary: (payload: any) => Promise<any>;
   fetchAllDayPlans: (itineraryId: number) => Promise<void>;
   fetchSuggestedPlaces: (payload: any) => Promise<SuggestedPlaceProps[]>;
+  fetchPlaceDetails: (payload: any) => Promise<PlaceDetailsProps | null>;
 }
 
 const useUserItineraryStore = create<UserItineraryState>((set, get) => ({
@@ -183,6 +207,31 @@ const useUserItineraryStore = create<UserItineraryState>((set, get) => ({
     } catch (error: any) {
       console.log('Fetch suggested places error:', error);
       return [];
+    }
+  },
+  fetchPlaceDetails: async (payload: any) => {
+    set({ isLoading: true, error: null });
+    try {
+      const { accessToken } = useAuthStore.getState();
+      const response = await axios.post(`${baseURL}/api/personalize/place_details/`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      set({ isLoading: false });
+      if (response.status === 200) {
+        return response.data;
+      }
+      return null;
+    } catch (error: any) {
+      console.log('Fetch place details error:', error);
+      set({
+        error: error?.response?.data?.message || error.message || 'Failed to fetch place details',
+        isLoading: false,
+      });
+      return null;
     }
   },
 }));

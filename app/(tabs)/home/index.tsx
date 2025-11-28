@@ -415,11 +415,36 @@ export default function Index() {
           ))}
         </View>
 
-        <SuggestedPlaceSection title="Most Visited Attractions" places={attractions} />
-        <SuggestedPlaceSection title="Most Visited Art Enthusiasts" places={artPlaces} />
-        <SuggestedPlaceSection title="Most Visited Local Festivals and Events" places={festivals} />
-        <SuggestedPlaceSection title="Most Visited Restaurant" places={restaurants} />
-        <SuggestedPlaceSection title="Most Visited Hotel & Resorts" places={hotels} />
+        <SuggestedPlaceSection
+          title="Most Visited Attractions"
+          places={attractions}
+          currentLat={currentLat}
+          currentLong={currentLong}
+        />
+        <SuggestedPlaceSection
+          title="Most Visited Art Enthusiasts"
+          places={artPlaces}
+          currentLat={currentLat}
+          currentLong={currentLong}
+        />
+        <SuggestedPlaceSection
+          title="Most Visited Local Festivals and Events"
+          places={festivals}
+          currentLat={currentLat}
+          currentLong={currentLong}
+        />
+        <SuggestedPlaceSection
+          title="Most Visited Restaurant"
+          places={restaurants}
+          currentLat={currentLat}
+          currentLong={currentLong}
+        />
+        <SuggestedPlaceSection
+          title="Most Visited Hotel & Resorts"
+          places={hotels}
+          currentLat={currentLat}
+          currentLong={currentLong}
+        />
       </View>
     </Layout>
   );
@@ -428,10 +453,16 @@ export default function Index() {
 function SuggestedPlaceSection({
   title,
   places,
+  currentLat,
+  currentLong,
 }: {
   title: string;
   places: SuggestedPlaceProps[];
+  currentLat: number | null;
+  currentLong: number | null;
 }) {
+  const router = useRouter();
+
   if (!places || places.length === 0) return null;
 
   return (
@@ -443,38 +474,53 @@ function SuggestedPlaceSection({
 
       <View className="flex w-full flex-row flex-wrap items-start justify-between gap-y-4 py-4">
         {places.slice(0, 4).map((place, index) => (
-          <View
+          <TouchableHighlight
             key={index}
-            className="flex w-[48%] flex-col gap-3 rounded-lg bg-white pb-5 shadow-sm">
-            <View className="relative flex h-40 items-center justify-center overflow-hidden rounded-t-lg">
-              <Image
-                source={{ uri: place.thumbnail || 'https://via.placeholder.com/150' }}
-                className="h-full w-full"
-                resizeMode="cover"
-              />
-              <TouchableHighlight className="absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80">
-                <Heart size={16} color={'#F86241'} />
-              </TouchableHighlight>
+            className="w-[48%] rounded-lg bg-white shadow-sm"
+            underlayColor="#f0f0f0"
+            onPress={() => {
+              if (currentLat && currentLong) {
+                router.push({
+                  pathname: '/home/place-details',
+                  params: {
+                    place_id: place.place_id,
+                    latitude: currentLat,
+                    longitude: currentLong,
+                  },
+                });
+              }
+            }}>
+            <View className="flex w-full flex-col gap-3 pb-5">
+              <View className="relative flex h-40 items-center justify-center overflow-hidden rounded-t-lg">
+                <Image
+                  source={{ uri: place.thumbnail || 'https://via.placeholder.com/150' }}
+                  className="h-full w-full"
+                  resizeMode="cover"
+                />
+                <TouchableHighlight className="absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80">
+                  <Heart size={16} color={'#F86241'} />
+                </TouchableHighlight>
 
-              <TouchableHighlight className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80">
-                <Share2Icon size={16} color={'#F86241'} />
-              </TouchableHighlight>
-            </View>
-            <View className="flex flex-col gap-2 px-3">
-              <Text className="text-base font-medium" numberOfLines={1}>
-                {place.name}
-              </Text>
-              <View className="flex w-full flex-row items-center justify-between">
-                <View className="flex flex-row items-center gap-1">
-                  <Star size={14} fill={'#E7AE33'} color={'#E7AE33'} />
-                  <Text className="text-xs font-medium text-[#63707C]">
-                    {place.total_rating || 'N/A'}
-                  </Text>
+                <TouchableHighlight className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80">
+                  <Share2Icon size={16} color={'#F86241'} />
+                </TouchableHighlight>
+              </View>
+              <View className="flex flex-col gap-2 px-3">
+                <Text className="text-base font-medium" numberOfLines={1}>
+                  {place.name}
+                </Text>
+                <View className="flex w-full flex-row items-center justify-between">
+                  <View className="flex flex-row items-center gap-1">
+                    <Star size={14} fill={'#E7AE33'} color={'#E7AE33'} />
+                    <Text className="text-xs font-medium text-[#63707C]">
+                      {place.total_rating || 'N/A'}
+                    </Text>
+                  </View>
+                  <Text className="text-xs text-[#63707C]">{place.distance?.toFixed(1)} km</Text>
                 </View>
-                <Text className="text-xs text-[#63707C]">{place.distance?.toFixed(1)} km</Text>
               </View>
             </View>
-          </View>
+          </TouchableHighlight>
         ))}
       </View>
     </View>
