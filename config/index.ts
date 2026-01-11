@@ -1,1 +1,1 @@
-export const baseURL: string = 'https://doctorless-stopperless-turner.ngrok-free.dev';
+export const baseURL: string = 'https://travel-assistant.duckdns.org';
