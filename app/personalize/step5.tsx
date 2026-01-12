@@ -20,7 +20,7 @@ export default function Index() {
       () => {
         setIsTimerDone(true);
       },
-      3 * 60 * 1000
+      1 * 60 * 1000
     ); // 3 minutes
 
     // 2. Call API immediately
@@ -36,6 +36,8 @@ export default function Index() {
 
       try {
         const response = await generateDay(Number(itineraryId));
+        console.log('before generate day');
+        console.log(response);
         if (response?.status === 200) {
           setApiSuccess(true);
         } else {
