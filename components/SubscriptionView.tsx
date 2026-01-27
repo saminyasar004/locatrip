@@ -12,6 +12,8 @@ import {
   Platform,
   Modal,
   SafeAreaView,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TabBar, TabView } from 'react-native-tab-view';
@@ -199,7 +201,45 @@ export default function SubscriptionView({
                   }
                 }
               }}
+              onError={(syntheticEvent) => {
+                const { nativeEvent } = syntheticEvent;
+                console.warn('WebView error: ', nativeEvent);
+                if (nativeEvent.description.toLowerCase().includes('ssl')) {
+                  Alert.alert(
+                    'SSL Error',
+                    'A secure connection could not be established. This is often caused by an incorrect date or time on your device. Please ensure your device date and time are set to "Automatic" and try again.',
+                    [{ text: 'OK', onPress: () => setShowGateway(false) }]
+                  );
+                }
+              }}
+              onHttpError={(syntheticEvent) => {
+                const { nativeEvent } = syntheticEvent;
+                console.warn('WebView HTTP error: ', nativeEvent);
+              }}
+              renderError={(errorName) => (
+                <View className="flex-1 items-center justify-center p-5">
+                  <Text className="text-center text-lg font-semibold text-red-500">
+                    Failed to load checkout page
+                  </Text>
+                  <Text className="mt-2 text-center text-[#63707C]">
+                    {errorName === 'NSURLErrorDomain' || errorName === 'net::ERR_CERT_DATE_INVALID'
+                      ? 'Please check if your device date and time are correct.'
+                      : 'Please check your internet connection and try again.'}
+                  </Text>
+                  <TouchableHighlight
+                    onPress={() => setShowGateway(false)}
+                    underlayColor="transparent"
+                    className="mt-6 rounded-full bg-primary px-8 py-3">
+                    <Text className="font-bold text-white">Go Back</Text>
+                  </TouchableHighlight>
+                </View>
+              )}
               startInLoadingState
+              renderLoading={() => (
+                <View className="absolute inset-0 items-center justify-center bg-white">
+                  <ActivityIndicator size="large" color="#F86241" />
+                </View>
+              )}
               scalesPageToFit
             />
           )}
