@@ -36,6 +36,7 @@ const useSubscriptionStore = create<SubscriptionStoreState>((set, get) => ({
   error: null,
 
   checkSubscriptionStatus: async () => {
+    console.log('[StatusCheck] Checking subscription status...');
     set({ isLoading: true, error: null });
     try {
       const accessToken = useAuthStore.getState().accessToken;
@@ -43,12 +44,16 @@ const useSubscriptionStore = create<SubscriptionStoreState>((set, get) => ({
         headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
       });
 
+      console.log('[StatusCheck] API Response Received:', response.data);
       set({ isLoading: false });
       if (response.status === 200 && response.data?.active_subscription) {
+        console.log('[StatusCheck] Active subscription confirmed.');
         return true;
       }
+      console.log('[StatusCheck] No active subscription found.');
       return false;
     } catch (error: any) {
+      console.error('[StatusCheck] Error checking status:', error.message);
       set({
         error: error?.response?.data?.message || error.message || 'Failed to check subscription',
         isLoading: false,
@@ -84,9 +89,11 @@ const useSubscriptionStore = create<SubscriptionStoreState>((set, get) => ({
   },
 
   checkout: async (plan_type: string) => {
+    console.log(`[Checkout] Starting checkout for plan: ${plan_type}`);
     set({ isLoading: true, error: null });
     try {
       const accessToken = useAuthStore.getState().accessToken;
+      console.log('[Checkout] Requesting checkout URL from API...');
       const response = await axios.post(
         `${baseURL}/api/payment/checkout/`,
         { plan_type },
@@ -95,9 +102,19 @@ const useSubscriptionStore = create<SubscriptionStoreState>((set, get) => ({
         }
       );
 
+      console.log('[Checkout] API Response Received:', {
+        status: response.status,
+        checkout_url: response.data?.checkout_url,
+      });
+
       set({ isLoading: false, error: null });
       return response;
     } catch (error: any) {
+      console.error('[Checkout] API Error:', {
+        message: error.message,
+        response: error?.response?.data,
+        status: error?.response?.status,
+      });
       set({
         error: error?.response?.data?.message || error.message || 'Checkout failed',
         isLoading: false,

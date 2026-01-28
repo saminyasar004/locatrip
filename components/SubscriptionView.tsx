@@ -18,6 +18,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TabBar, TabView } from 'react-native-tab-view';
 import { WebView } from 'react-native-webview';
+import { Toast } from 'toastify-react-native';
 
 const getIconForPlan = (planName: string) => {
   const lower = planName.toLowerCase();
@@ -117,6 +118,19 @@ export default function SubscriptionView({
   const [showGateway, setShowGateway] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
 
+  // Custom Alert Modal State
+  const [errorModal, setErrorModal] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    visible: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
+
   useEffect(() => {
     fetchAllSubscription();
   }, []);
@@ -128,19 +142,27 @@ export default function SubscriptionView({
   }, [fetchAllSubscription]);
 
   const handleUpgrade = async (planName: string) => {
+    console.log(`[CheckoutView] handleUpgrade called for: ${planName}`);
     const response = await checkout(planName);
     if (response?.status === 200 && response.data?.checkout_url) {
       let url = response.data.checkout_url;
+      console.log(`[CheckoutView] Initial URL from API: ${url}`);
 
       // Fix for Android Emulator (0.0.0.0 -> 10.0.2.2)
       if (Platform.OS === 'android' && url.includes('0.0.0.0')) {
         url = url.replace('0.0.0.0', '10.0.2.2');
+        console.log(`[CheckoutView] Android Fix: Replaced 0.0.0.0 with 10.0.2.2 -> ${url}`);
       } else if (Platform.OS === 'android' && url.includes('127.0.0.1')) {
         url = url.replace('127.0.0.1', '10.0.2.2');
+        console.log(`[CheckoutView] Android Fix: Replaced 127.0.0.1 with 10.0.2.2 -> ${url}`);
       }
 
+      console.log(`[CheckoutView] Setting checkoutUrl and showing gateway: ${url}`);
       setCheckoutUrl(url);
       setShowGateway(true);
+    } else {
+      console.error('[CheckoutView] Failed to get checkout_url from response:', response?.data);
+      Toast.error('Could not initialize checkout. Please try again.');
     }
   };
 
@@ -173,48 +195,110 @@ export default function SubscriptionView({
         animationType="slide"
         transparent={false}>
         <SafeAreaView className="flex-1 bg-white">
-          <View className="flex-row items-center justify-between border-b border-gray-200 px-4 py-3">
+          <View
+            className="flex-row items-center justify-between border-b border-gray-200 bg-white px-4 py-3"
+            style={{ paddingTop: insets.top }}>
             <Text className="text-lg font-semibold">Checkout</Text>
             <TouchableHighlight
-              onPress={() => setShowGateway(false)}
+              onPress={() => {
+                setShowGateway(false);
+                setCheckoutUrl(null);
+              }}
               underlayColor="transparent"
               className="p-2">
               <X size={24} color="#000" />
             </TouchableHighlight>
           </View>
-          {checkoutUrl && (
+          {checkoutUrl && checkoutUrl.trim().length > 0 && (
             <WebView
               source={{ uri: checkoutUrl }}
               style={{ flex: 1 }}
+              onLoadStart={() => console.log('[WebView] Page started loading...')}
+              onLoadEnd={() => console.log('[WebView] Page finished loading.')}
               onNavigationStateChange={(navState) => {
-                // Check for success URL (0.0.0.0 or whatever indicates success)
-                if (
+                console.log('[WebView] onNavigationStateChange:', {
+                  url: navState.url,
+                  loading: navState.loading,
+                  canGoBack: navState.canGoBack,
+                });
+                // Check for success or cancel URL (0.0.0.0 or keywords)
+                const isSuccess =
                   navState.url.includes('0.0.0.0') ||
                   navState.url.includes('success=true') ||
-                  navState.url.includes('checkout_success')
-                ) {
+                  navState.url.includes('checkout_success') ||
+                  navState.url.includes('/success');
+
+                const isCancel =
+                  navState.url.includes('cancel=true') || navState.url.includes('checkout_cancel');
+
+                if (isSuccess) {
+                  console.log('[WebView] Success URL detected, closing gateway.');
                   setShowGateway(false);
-                  if (onSuccess) {
-                    onSuccess();
-                  } else if (onBack) {
-                    onBack();
-                  }
+                  setCheckoutUrl(null);
+                  if (onSuccess) onSuccess();
+                  else if (onBack) onBack();
+                } else if (isCancel) {
+                  console.log('[WebView] Cancel URL detected, closing gateway.');
+                  setShowGateway(false);
+                  setCheckoutUrl(null);
                 }
+              }}
+              onShouldStartLoadWithRequest={(request) => {
+                console.log('[WebView] onShouldStartLoadWithRequest:', request.url);
+                // Proactively catch the redirect before it fails
+                if (
+                  request.url.includes('0.0.0.0') ||
+                  request.url.includes('success=true') ||
+                  request.url.includes('/success')
+                ) {
+                  console.log('[WebView] Blocking success URL proactively and closing gateway.');
+                  setShowGateway(false);
+                  setCheckoutUrl(null);
+                  if (onSuccess) onSuccess();
+                  else if (onBack) onBack();
+                  return false; // Stop the load
+                }
+                return true;
               }}
               onError={(syntheticEvent) => {
                 const { nativeEvent } = syntheticEvent;
-                console.warn('WebView error: ', nativeEvent);
-                if (nativeEvent.description.toLowerCase().includes('ssl')) {
-                  Alert.alert(
-                    'SSL Error',
-                    'A secure connection could not be established. This is often caused by an incorrect date or time on your device. Please ensure your device date and time are set to "Automatic" and try again.',
-                    [{ text: 'OK', onPress: () => setShowGateway(false) }]
+                console.warn('[WebView] onError:', nativeEvent);
+
+                // If it's a success URL that failed (e.g. ERR_CONNECTION_REFUSED to 0.0.0.0)
+                // we treat it as a success and close the gateway.
+                if (
+                  nativeEvent.url.includes('0.0.0.0') ||
+                  nativeEvent.url.includes('success=true') ||
+                  nativeEvent.url.includes('/success')
+                ) {
+                  console.log(
+                    '[WebView] Success URL failed but treating as success, closing gateway.'
                   );
+                  setShowGateway(false);
+                  setCheckoutUrl(null);
+                  if (onSuccess) onSuccess();
+                  else if (onBack) onBack();
+                  return;
+                }
+
+                if (nativeEvent.description.toLowerCase().includes('ssl')) {
+                  setErrorModal({
+                    visible: true,
+                    title: 'SSL Error',
+                    message:
+                      'A secure connection could not be established. This is often caused by an incorrect date or time on your device. Please ensure your device date and time are set to "Automatic" and try again.',
+                    onConfirm: () => {
+                      console.log('[WebView] SSL Alert OK pressed, closing gateway.');
+                      setShowGateway(false);
+                      setCheckoutUrl(null);
+                      setErrorModal((prev) => ({ ...prev, visible: false }));
+                    },
+                  });
                 }
               }}
               onHttpError={(syntheticEvent) => {
                 const { nativeEvent } = syntheticEvent;
-                console.warn('WebView HTTP error: ', nativeEvent);
+                console.warn('[WebView] onHttpError:', nativeEvent);
               }}
               renderError={(errorName) => (
                 <View className="flex-1 items-center justify-center p-5">
@@ -227,7 +311,10 @@ export default function SubscriptionView({
                       : 'Please check your internet connection and try again.'}
                   </Text>
                   <TouchableHighlight
-                    onPress={() => setShowGateway(false)}
+                    onPress={() => {
+                      setShowGateway(false);
+                      setCheckoutUrl(null);
+                    }}
                     underlayColor="transparent"
                     className="mt-6 rounded-full bg-primary px-8 py-3">
                     <Text className="font-bold text-white">Go Back</Text>
@@ -246,6 +333,35 @@ export default function SubscriptionView({
         </SafeAreaView>
       </Modal>
 
+      {/* Custom Error Modal */}
+      <Modal
+        visible={errorModal.visible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setErrorModal((prev) => ({ ...prev, visible: false }))}>
+        <View className="flex-1 items-center justify-center bg-black/50 px-6">
+          <View className="w-full max-w-sm rounded-[24px] bg-white p-6 shadow-xl">
+            <View className="mb-4 items-center">
+              <View className="h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                <X size={24} color="#EF4444" />
+              </View>
+            </View>
+            <Text className="mb-2 text-center text-xl font-bold text-gray-900">
+              {errorModal.title}
+            </Text>
+            <Text className="mb-6 text-center text-base leading-6 text-gray-500">
+              {errorModal.message}
+            </Text>
+            <TouchableHighlight
+              onPress={errorModal.onConfirm}
+              underlayColor="#f1583d"
+              className="w-full items-center justify-center rounded-full bg-primary py-4">
+              <Text className="text-lg font-bold text-white">OK</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+
       <ScrollView
         className="h-full flex-1 bg-[#FBFEFE]"
         refreshControl={
@@ -259,7 +375,9 @@ export default function SubscriptionView({
         contentContainerStyle={{ paddingBottom: 0, paddingHorizontal: 20 }}>
         {/* Header */}
         {showHeader && (
-          <View className="flex w-full flex-row items-center gap-3 bg-white">
+          <View
+            className="flex w-full flex-row items-center gap-3 bg-white"
+            style={{ paddingTop: insets.top }}>
             <TouchableHighlight onPress={onBack} underlayColor="transparent">
               <ArrowLeft size={24} color="#63707C" />
             </TouchableHighlight>
