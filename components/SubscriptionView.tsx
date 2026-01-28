@@ -195,9 +195,7 @@ export default function SubscriptionView({
         animationType="slide"
         transparent={false}>
         <SafeAreaView className="flex-1 bg-white">
-          <View
-            className="flex-row items-center justify-between border-b border-gray-200 bg-white px-4 py-3"
-            style={{ paddingTop: insets.top }}>
+          <View className="flex-row items-center justify-between border-b border-gray-200 bg-white px-4 py-4">
             <Text className="text-lg font-semibold">Checkout</Text>
             <TouchableHighlight
               onPress={() => {
@@ -375,9 +373,7 @@ export default function SubscriptionView({
         contentContainerStyle={{ paddingBottom: 0, paddingHorizontal: 20 }}>
         {/* Header */}
         {showHeader && (
-          <View
-            className="flex w-full flex-row items-center gap-3 bg-white"
-            style={{ paddingTop: insets.top }}>
+          <View className="flex w-full flex-row items-center gap-3 bg-white py-4">
             <TouchableHighlight onPress={onBack} underlayColor="transparent">
               <ArrowLeft size={24} color="#63707C" />
             </TouchableHighlight>

@@ -40,7 +40,7 @@ export default function Index() {
           style={{ margin: 0 }}
           useNativeDriver
           hideModalContentWhileAnimating>
-          <View className="h-full w-full bg-white">
+          <SafeAreaView className="h-full w-full bg-white">
             <SubscriptionView
               onBack={() => setModalVisible(false)}
               showHeader={true}
@@ -49,7 +49,7 @@ export default function Index() {
                 router.push('/personalize/step4');
               }}
             />
-          </View>
+          </SafeAreaView>
         </Modal>
       </ScrollView>
     </SafeAreaView>

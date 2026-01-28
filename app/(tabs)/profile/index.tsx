@@ -52,119 +52,111 @@ export default function Index() {
         <View className="row flex flex-col gap-4">
           <Text className="text-lg font-normal text-[#63707C]">Account</Text>
 
-          <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
-            <View className="flex flex-row items-center gap-4">
-              <UserRound size={24} color={'#F86241'} />
-
-              <Text className="font-medium">Personal Informations</Text>
-            </View>
-
-            <TouchableHighlight
-              onPress={() => router.push('/profile/personal-informations')}
-              underlayColor={'transparent'}>
+          <TouchableHighlight
+            onPress={() => router.push('/profile/personal-informations')}
+            underlayColor="#f1f1f1"
+            className="rounded-lg">
+            <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
+              <View className="flex flex-row items-center gap-4">
+                <UserRound size={24} color={'#F86241'} />
+                <Text className="font-medium">Personal Informations</Text>
+              </View>
               <ChevronRight size={25} color={'#F86241'} />
-            </TouchableHighlight>
-          </View>
-
-          <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
-            <View className="flex flex-row items-center gap-4">
-              <SlidersHorizontal size={24} color={'#F86241'} />
-
-              <Text className="font-medium">Preferences</Text>
             </View>
+          </TouchableHighlight>
 
-            <TouchableHighlight
-              onPress={() => router.push('/profile/preference')}
-              underlayColor={'transparent'}>
+          <TouchableHighlight
+            onPress={() => router.push('/profile/preference')}
+            underlayColor="#f1f1f1"
+            className="rounded-lg">
+            <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
+              <View className="flex flex-row items-center gap-4">
+                <SlidersHorizontal size={24} color={'#F86241'} />
+                <Text className="font-medium">Preferences</Text>
+              </View>
               <ChevronRight size={25} color={'#F86241'} />
-            </TouchableHighlight>
-          </View>
-
-          <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
-            <View className="flex flex-row items-center gap-4">
-              <Wallet size={24} color={'#F86241'} />
-
-              <Text className="font-medium">Subscriptions</Text>
             </View>
+          </TouchableHighlight>
 
-            <TouchableHighlight
-              onPress={() => router.push('/profile/subscription')}
-              underlayColor={'transparent'}>
+          <TouchableHighlight
+            onPress={() => router.push('/profile/subscription')}
+            underlayColor="#f1f1f1"
+            className="rounded-lg">
+            <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
+              <View className="flex flex-row items-center gap-4">
+                <Wallet size={24} color={'#F86241'} />
+                <Text className="font-medium">Subscriptions</Text>
+              </View>
               <ChevronRight size={25} color={'#F86241'} />
-            </TouchableHighlight>
-          </View>
-
-          <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
-            <View className="flex flex-row items-center gap-4">
-              <Plane size={24} color={'#F86241'} />
-
-              <Text className="font-medium">My Trip</Text>
             </View>
+          </TouchableHighlight>
 
-            <TouchableHighlight
-              onPress={() => router.push('/profile/my-trip')}
-              underlayColor={'transparent'}>
+          <TouchableHighlight
+            onPress={() => router.push('/profile/my-trip')}
+            underlayColor="#f1f1f1"
+            className="rounded-lg">
+            <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
+              <View className="flex flex-row items-center gap-4">
+                <Plane size={24} color={'#F86241'} />
+                <Text className="font-medium">My Trip</Text>
+              </View>
               <ChevronRight size={25} color={'#F86241'} />
-            </TouchableHighlight>
-          </View>
-
-          <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
-            <View className="flex flex-row items-center gap-4">
-              <Heart size={24} color={'#F86241'} />
-
-              <Text className="font-medium">Bookmark</Text>
             </View>
+          </TouchableHighlight>
 
-            <TouchableHighlight
-              onPress={() => router.push('/profile/bookmark')}
-              underlayColor={'transparent'}>
+          <TouchableHighlight
+            onPress={() => router.push('/profile/bookmark')}
+            underlayColor="#f1f1f1"
+            className="rounded-lg">
+            <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
+              <View className="flex flex-row items-center gap-4">
+                <Heart size={24} color={'#F86241'} />
+                <Text className="font-medium">Bookmark</Text>
+              </View>
               <ChevronRight size={25} color={'#F86241'} />
-            </TouchableHighlight>
-          </View>
-
-          <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
-            <View className="flex flex-row items-center gap-4">
-              <Calendar size={24} color={'#F86241'} />
-
-              <Text className="font-medium">Event</Text>
             </View>
+          </TouchableHighlight>
 
-            <TouchableHighlight
-              onPress={() => router.push('/profile/event')}
-              underlayColor={'transparent'}>
+          <TouchableHighlight
+            onPress={() => router.push('/profile/event')}
+            underlayColor="#f1f1f1"
+            className="rounded-lg">
+            <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
+              <View className="flex flex-row items-center gap-4">
+                <Calendar size={24} color={'#F86241'} />
+                <Text className="font-medium">Event</Text>
+              </View>
               <ChevronRight size={25} color={'#F86241'} />
-            </TouchableHighlight>
-          </View>
+            </View>
+          </TouchableHighlight>
 
           <Text className="text-lg font-normal text-[#63707C]">Help & Support</Text>
 
-          <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
-            <View className="flex flex-row items-center gap-4">
-              <Info size={24} color={'#F86241'} />
-
-              <Text className="font-medium">Help & Supoprt</Text>
-            </View>
-
-            <TouchableHighlight
-              onPress={() => router.push('/profile/help')}
-              underlayColor={'transparent'}>
+          <TouchableHighlight
+            onPress={() => router.push('/profile/help')}
+            underlayColor="#f1f1f1"
+            className="rounded-lg">
+            <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
+              <View className="flex flex-row items-center gap-4">
+                <Info size={24} color={'#F86241'} />
+                <Text className="font-medium">Help & Supoprt</Text>
+              </View>
               <ChevronRight size={25} color={'#F86241'} />
-            </TouchableHighlight>
-          </View>
-
-          <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
-            <View className="flex flex-row items-center gap-4">
-              <ReceiptText size={24} color={'#F86241'} />
-
-              <Text className="font-medium">Terms & Conditions</Text>
             </View>
+          </TouchableHighlight>
 
-            <TouchableHighlight
-              onPress={() => router.push('/profile/terms')}
-              underlayColor={'transparent'}>
+          <TouchableHighlight
+            onPress={() => router.push('/profile/terms')}
+            underlayColor="#f1f1f1"
+            className="rounded-lg">
+            <View className="flex w-full flex-row items-center justify-between rounded-lg border-2 border-primary/40 bg-white px-3 py-4">
+              <View className="flex flex-row items-center gap-4">
+                <ReceiptText size={24} color={'#F86241'} />
+                <Text className="font-medium">Terms & Conditions</Text>
+              </View>
               <ChevronRight size={25} color={'#F86241'} />
-            </TouchableHighlight>
-          </View>
+            </View>
+          </TouchableHighlight>
 
           <View className="flex w-full items-center justify-center pt-8">
             <TouchableHighlight
