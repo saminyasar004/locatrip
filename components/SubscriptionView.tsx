@@ -38,7 +38,7 @@ const PlanTab = ({
 }) => {
   if (!subscriptionDetails) return null;
 
-  const { plan_name, price, duration } = subscriptionDetails;
+  const { plan_name, price, duration, itinerary_limit } = subscriptionDetails;
   const icon = getIconForPlan(plan_name);
 
   return (
@@ -56,6 +56,11 @@ const PlanTab = ({
 
       {/* Price */}
       <Text className="text-center text-4xl font-bold">${price ?? 0}</Text>
+
+      {/* Itinerary Limit */}
+      <Text className="mt-1 text-center text-lg text-[#63707C]">
+        {itinerary_limit ? `Limit: ${itinerary_limit} Itineraries` : 'Unlimited Itineraries'}
+      </Text>
 
       {/* Upgrade Button */}
       <TouchableHighlight

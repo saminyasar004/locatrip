@@ -8,7 +8,7 @@ export interface SubscriptionItemProps {
   plan_name: string;
   duration: number;
   price: number;
-  itinerary_limit: number;
+  itinerary_limit: number | null;
   feature_1: string;
   feature_2: string;
   feature_3: string;
