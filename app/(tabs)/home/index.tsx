@@ -14,6 +14,7 @@ import {
   Plus,
   Share2Icon,
   Star,
+  Target,
 } from 'lucide-react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -21,13 +22,13 @@ import {
   Image,
   RefreshControl,
   Text,
-  TextInput,
   TouchableHighlight,
   TouchableOpacity,
   View,
   FlatList,
   Pressable,
 } from 'react-native';
+import LocationFilter from 'components/LocationFilter';
 import DropDownPicker from 'react-native-dropdown-picker';
 import useAuthStore from 'store/authStore';
 import useUserItineraryStore, {
@@ -78,7 +79,6 @@ export default function Index() {
   ]);
 
   // Radius Picker
-  const [isDistancePickerOpen, setIsDistancePickerOpen] = useState(false);
   const [pickedDistance, setPickedDistance] = useState<string | null>('10-km');
   const [distance, setDistance] = useState([
     { label: '5 km', value: '5-km' },
@@ -98,11 +98,6 @@ export default function Index() {
 
   // Suggested Places State
   const [locationQuery, setLocationQuery] = useState('');
-  const [locationResults, setLocationResults] = useState<any[]>([]);
-  const [showLocationList, setShowLocationList] = useState(false);
-  const [locationLoading, setLocationLoading] = useState(false);
-  const debounceRef = React.useRef<NodeJS.Timeout | null>(null);
-
   const [currentLat, setCurrentLat] = useState<number | null>(null);
   const [currentLong, setCurrentLong] = useState<number | null>(null);
 
@@ -112,44 +107,10 @@ export default function Index() {
   const [restaurants, setRestaurants] = useState<SuggestedPlaceProps[]>([]);
   const [hotels, setHotels] = useState<SuggestedPlaceProps[]>([]);
 
-  // Location Search
-  const searchLocation = (text: string) => {
-    setLocationQuery(text);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!text || text.trim().length < 1) {
-      setLocationResults([]);
-      return;
-    }
-
-    setLocationLoading(true);
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          text
-        )}&addressdetails=1&limit=5`;
-        const res = await fetch(url, {
-          headers: {
-            'User-Agent': 'locatip/1.0 (support@locatip.com)',
-            'Accept-Language': 'en',
-          },
-        });
-        const data = await res.json();
-        setLocationResults(data);
-        setShowLocationList(true);
-      } catch (err) {
-        console.log('Location search error:', err);
-      } finally {
-        setLocationLoading(false);
-      }
-    }, 400);
-  };
-
   const selectLocation = (item: any) => {
     setLocationQuery(item.display_name);
     setCurrentLat(Number(item.lat));
     setCurrentLong(Number(item.lon));
-    setLocationResults([]);
-    setShowLocationList(false);
   };
 
   // Fetch Suggested Places
@@ -342,74 +303,14 @@ export default function Index() {
           </Text>
         </View>
 
-        <View
-          className="relative flex h-auto w-full flex-row items-center gap-5 py-3"
-          style={{ zIndex: 3000 }}>
-          <View className="flex h-12 flex-1 flex-row items-center justify-start rounded-lg bg-accent px-3">
-            <MapPin color="#63707C" size={20} />
-            <TextInput
-              className="flex-1 text-[#63707C] placeholder:text-[#63707C]"
-              placeholder="Location"
-              value={locationQuery}
-              onChangeText={searchLocation}
-            />
-            {locationLoading && <ActivityIndicator size="small" color="#F86241" />}
-          </View>
-
-          {/* Location Autocomplete List */}
-          {showLocationList && locationResults.length > 0 && (
-            <View
-              className="absolute left-0 top-16 z-50 max-h-60 w-full overflow-hidden rounded-lg bg-white shadow-lg"
-              style={{ elevation: 5 }}>
-              <View className="flex flex-col">
-                {locationResults.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    className="border-b border-gray-100 p-3"
-                    onPress={() => selectLocation(item)}>
-                    <Text className="text-sm text-gray-700">{item.display_name}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          )}
-
-          <View className="flex h-full w-[35%] flex-col gap-2" style={{ zIndex: 1000 }}>
-            <DropDownPicker
-              open={isDistancePickerOpen}
-              value={pickedDistance}
-              items={distance}
-              setOpen={setIsDistancePickerOpen}
-              setValue={setPickedDistance}
-              setItems={setDistance}
-              placeholder="10 km"
-              style={{
-                backgroundColor: '#f8dcd7',
-                borderColor: '#f8dcd7',
-                flex: 1,
-                zIndex: 2000,
-                minHeight: 40,
-              }}
-              ArrowDownIconComponent={({ style }) => <ChevronDown size={24} color={'#6E6E6E'} />}
-              ArrowUpIconComponent={({ style }) => <ChevronUp size={24} color={'#6E6E6E'} />}
-              dropDownContainerStyle={{
-                backgroundColor: '#ffffff',
-                borderColor: '#ffffff',
-                borderRadius: 10,
-                zIndex: 2000,
-              }}
-              labelStyle={{
-                color: '#575757',
-                fontWeight: '500',
-              }}
-              selectedItemContainerStyle={{
-                backgroundColor: '#f8dcd7',
-                borderRadius: 8,
-              }}
-              closeOnBackPressed={true}
-            />
-          </View>
-        </View>
+        <LocationFilter
+          locationQuery={locationQuery}
+          setLocationQuery={setLocationQuery}
+          onSelectLocation={selectLocation}
+          pickedDistance={pickedDistance}
+          setPickedDistance={setPickedDistance}
+          distanceItems={distance}
+        />
 
         <View className="flex w-full flex-row flex-wrap gap-3 py-3">
           {topicTags.map((tag, index) => (

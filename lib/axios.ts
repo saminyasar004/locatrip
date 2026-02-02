@@ -9,10 +9,14 @@ const apiClient = axios.create({
   },
 });
 
+import useAuthStore from '@/store/authStore';
+
 // Interceptor for auth (e.g., token from Zustand or AsyncStorage)
 apiClient.interceptors.request.use((config) => {
-  // Example: const token = useAuthStore.getState().token;
-  // if (token) config.headers.Authorization = `Bearer ${token}`;
+  const token = useAuthStore.getState().accessToken;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
