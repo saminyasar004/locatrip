@@ -68,7 +68,9 @@ const PlanTab = ({
         underlayColor="transparent"
         className="flex w-full items-center justify-center py-8">
         <View className="flex w-full flex-row items-center justify-center gap-3 rounded-full border-2 border-primary bg-primary p-3">
-          <Text className="text-xl font-bold text-white">Upgrade Plan</Text>
+          <Text className="text-xl font-bold text-white">
+            {plan_name.toLowerCase().includes('free') ? 'Continue as Free' : 'Upgrade Plan'}
+          </Text>
         </View>
       </TouchableHighlight>
 
